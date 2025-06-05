@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tobias Sjögreen – Portfolio</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 text-gray-800">
+  <header class="bg-white shadow-md">
+    <div class="max-w-6xl mx-auto flex items-center justify-between p-6">
+      <div class="flex items-center space-x-4">
+        <img src="assets/tobias.jpg" alt="Tobias Sjögreen" class="w-20 h-20 rounded-full border-2 border-gray-300">
+        <div>
+          <h1 class="text-2xl font-bold">Tobias Sjögreen</h1>
+          <p class="text-sm text-gray-600">Anvendt Matematiker · Applied Mathematician</p>
+        </div>
+      </div>
+      <div class="space-x-4">
+        <a href="cv.html" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">CV (DA)</a>
+        <a href="cv_en.html" class="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600">CV (EN)</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-6xl mx-auto py-10 px-4">
+    <section class="mb-10">
+      <h2 class="text-xl font-semibold mb-4">Udvalgte Projekter / Selected Projects</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+        <!-- Projekt 1 -->
+        <a href="projekter/projekt1.html" class="bg-white p-4 shadow hover:shadow-lg rounded-lg transition">
+          <img src="assets/projekt1.jpg" alt="Projekt 1" class="rounded mb-2">
+          <h3 class="font-semibold text-lg">Simulering med Navier-Stokes</h3>
+          <p class="text-sm text-gray-600">
+            Et bachelorprojekt hvor jeg brugte Python og FENICS til at modellere advektions-reaktions-diffusion.
+            <br><em>A bachelor project using Python and FENICS for modeling advection-reaction-diffusion.</em>
+          </p>
+        </a>
+
+        <!-- Projekt 2 -->
+        <a href="projekter/projekt2.html" class="bg-white p-4 shadow hover:shadow-lg rounded-lg transition">
+          <img src="assets/projekt2.jpg" alt="Projekt 2" class="rounded mb-2">
+          <h3 class="font-semibold text-lg">Machine Learning og DMD</h3>
+          <p class="text-sm text-gray-600">
+            Specialeprojekt om dynamiske systemer og data-drevet modellering af proteinbevægelser i celler.
+            <br><em>Master's thesis on dynamic systems and data-driven modeling of protein motion in cells.</em>
+          </p>
+        </a>
+
+      </div>
+    </section>
+  </main>
+
+  <footer class="bg-white border-t mt-12 py-4">
+    <div class="max-w-6xl mx-auto text-center text-sm text-gray-500">
+      Kontakt / Contact: tobias.sjoegreen@gmail.com · Odense · © 2025
+    </div>
+  </footer>
+</body>
+</html>
