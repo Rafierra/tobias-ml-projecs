@@ -1,72 +1,128 @@
 <!DOCTYPE html>
-<html lang="en">
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-5446DCR3BK"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-5446DCR3BK');
-</script>
+<html lang="da">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Tobias Sjögreen – CV</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <script>
+    function setLang(lang) {
+      document.querySelectorAll('[data-lang]').forEach(el => {
+        el.style.display = el.getAttribute('data-lang') === lang ? '' : 'none';
+      });
+      // Update button styles
+      document.getElementById('btn-da').classList.toggle('bg-blue-500', lang === 'da');
+      document.getElementById('btn-da').classList.toggle('bg-gray-300', lang !== 'da');
+      document.getElementById('btn-en').classList.toggle('bg-blue-500', lang === 'en');
+      document.getElementById('btn-en').classList.toggle('bg-gray-300', lang !== 'en');
+      // Update html lang attribute
+      document.documentElement.lang = lang;
+    }
+    window.addEventListener('DOMContentLoaded', () => setLang('da'));
+  </script>
 </head>
 <body class="bg-gray-50 text-gray-800">
   <header class="bg-white shadow">
     <div class="max-w-4xl mx-auto flex items-center justify-between p-6">
       <h1 class="text-2xl font-bold">Curriculum Vitae</h1>
-      <a href="index.html" class="text-blue-500 hover:underline">← Back to homepage</a>
+      <div class="flex items-center gap-2">
+        <button id="btn-da" onclick="setLang('da')" class="px-3 py-1 rounded bg-blue-500 text-white font-semibold">Dansk</button>
+        <button id="btn-en" onclick="setLang('en')" class="px-3 py-1 rounded bg-gray-300 text-gray-800 font-semibold">English</button>
+        <a href="index.html" class="ml-4 text-blue-500 hover:underline">← Forside / Homepage</a>
+      </div>
     </div>
   </header>
 
   <main class="max-w-4xl mx-auto px-6 py-10">
-    <section class="flex flex-col md:flex-row gap-6 items-start">
-      <img src="assets/tobias.jpg" alt="Tobias Sjögreen" class="w-48 h-64 object-cover rounded-xl shadow-md">
-      <div>
-        <h2 class="text-xl font-semibold">Tobias Sjögreen</h2>
-        <p class="text-gray-600 mb-2">26 years old · Odense, Denmark</p>
-        <p class="text-sm text-gray-700">Reflective, analytical, and technically grounded MSc in Applied Mathematics with experience in data-driven machine learning methods and strong communication skills.</p>
-        <p class="mt-4 text-sm text-gray-600">📧 <a href="mailto:tobias.sjoegreen@gmail.com" class="text-blue-500">tobias.sjoegreen@gmail.com</a></p>
-      </div>
-    </section>
 
-    <section class="mt-10">
-      <h3 class="text-lg font-semibold border-b pb-1 mb-4">Education</h3>
-      <ul class="space-y-3 text-sm">
-        <li><strong>2021–2024:</strong> MSc in Applied Mathematics, University of Southern Denmark — Thesis on ML methods like DMD, SINDy, and Koopman theory applied to protein movement modeling.</li>
-        <li><strong>2018–2021:</strong> BSc in Applied Mathematics, SDU — Used Python and FENICS to model advection-reaction-diffusion and Navier-Stokes equations.</li>
-        <li><strong>2015–2018:</strong> High School, Tornbjerg Gymnasium</li>
-        <li><strong>2014–2015:</strong> Exchange student, USA</li>
-      </ul>
-    </section>
+    <!-- Dansk -->
+    <div data-lang="da">
+      <section class="flex flex-col md:flex-row gap-6 items-start">
+        <img src="assets/tobias.jpg" alt="Tobias Sjögreen" class="w-48 h-64 object-cover rounded-xl shadow-md">
+        <div>
+          <h2 class="text-xl font-semibold">Tobias Sjögreen</h2>
+          <p class="text-gray-600 mb-2">26 år · Odense, Danmark</p>
+          <p class="text-sm text-gray-700">Reflekterende, analytisk og teknisk stærk cand.scient. i Anvendt Matematik med erfaring i datadrevne machine learning-metoder og gode kommunikationsevner.</p>
+          <p class="mt-4 text-sm text-gray-600">📧 <a href="mailto:tobias.sjoegreen@gmail.com" class="text-blue-500">tobias.sjoegreen@gmail.com</a></p>
+        </div>
+      </section>
 
-    <section class="mt-8">
-      <h3 class="text-lg font-semibold border-b pb-1 mb-4">Work Experience</h3>
-      <ul class="space-y-3 text-sm">
-        <li><strong>2025:</strong> Teaching internship at Mulernes Legatskole (High School)</li>
-        <li><strong>2022–2023:</strong> Math tutor (8th–10th grade), Ungdomshuset Odense</li>
-        <li><strong>2022:</strong> Substitute teacher for 10th grade, UngOdense</li>
-      </ul>
-    </section>
+      <section class="mt-10">
+        <h3 class="text-lg font-semibold border-b pb-1 mb-4">Uddannelse</h3>
+        <ul class="space-y-3 text-sm">
+          <li><strong>2021–2024:</strong> Cand.scient. i Anvendt Matematik, Syddansk Universitet — Speciale om ML-metoder som DMD, SINDy og Koopman-teori anvendt på modellering af proteinbevægelser.</li>
+          <li><strong>2018–2021:</strong> BSc i Anvendt Matematik, SDU — Brugte Python og FENICS til at modellere advektions-reaktions-diffusion og Navier-Stokes ligninger.</li>
+          <li><strong>2015–2018:</strong> Student, Tornbjerg Gymnasium</li>
+          <li><strong>2014–2015:</strong> Udvekslingsstudent, USA</li>
+        </ul>
+      </section>
 
-    <section class="mt-8">
-      <h3 class="text-lg font-semibold border-b pb-1 mb-4">IT Skills</h3>
-      <p class="text-sm">Python, Java, Matlab, R, C++</p>
-    </section>
+      <section class="mt-8">
+        <h3 class="text-lg font-semibold border-b pb-1 mb-4">Erhvervserfaring</h3>
+        <ul class="space-y-3 text-sm">
+          <li><strong>2025:</strong> Praktik som gymnasielærer, Mulernes Legatskole</li>
+          <li><strong>2022–2023:</strong> Matematikunderviser (8.–10. klasse), Ungdomshuset Odense</li>
+          <li><strong>2022:</strong> Vikar for 10. klasse, UngOdense</li>
+        </ul>
+      </section>
 
-    <section class="mt-8">
-      <h3 class="text-lg font-semibold border-b pb-1 mb-4">Languages</h3>
-      <p class="text-sm">Danish (native), English (fluent)</p>
-    </section>
+      <section class="mt-8">
+        <h3 class="text-lg font-semibold border-b pb-1 mb-4">IT-kompetencer</h3>
+        <p class="text-sm">Python, Java, Matlab, R, C++</p>
+      </section>
+
+      <section class="mt-8">
+        <h3 class="text-lg font-semibold border-b pb-1 mb-4">Sprog</h3>
+        <p class="text-sm">Dansk (modersmål), Engelsk (flydende)</p>
+      </section>
+    </div>
+
+    <!-- English -->
+    <div data-lang="en" style="display:none">
+      <section class="flex flex-col md:flex-row gap-6 items-start">
+        <img src="assets/tobias.jpg" alt="Tobias Sjögreen" class="w-48 h-64 object-cover rounded-xl shadow-md">
+        <div>
+          <h2 class="text-xl font-semibold">Tobias Sjögreen</h2>
+          <p class="text-gray-600 mb-2">26 years old · Odense, Denmark</p>
+          <p class="text-sm text-gray-700">Reflective, analytical, and technically grounded MSc in Applied Mathematics with experience in data-driven machine learning methods and strong communication skills.</p>
+          <p class="mt-4 text-sm text-gray-600">📧 <a href="mailto:tobias.sjoegreen@gmail.com" class="text-blue-500">tobias.sjoegreen@gmail.com</a></p>
+        </div>
+      </section>
+
+      <section class="mt-10">
+        <h3 class="text-lg font-semibold border-b pb-1 mb-4">Education</h3>
+        <ul class="space-y-3 text-sm">
+          <li><strong>2021–2024:</strong> MSc in Applied Mathematics, University of Southern Denmark — Thesis on ML methods like DMD, SINDy, and Koopman theory applied to protein movement modeling.</li>
+          <li><strong>2018–2021:</strong> BSc in Applied Mathematics, SDU — Used Python and FENICS to model advection-reaction-diffusion and Navier-Stokes equations.</li>
+          <li><strong>2015–2018:</strong> High School, Tornbjerg Gymnasium</li>
+          <li><strong>2014–2015:</strong> Exchange student, USA</li>
+        </ul>
+      </section>
+
+      <section class="mt-8">
+        <h3 class="text-lg font-semibold border-b pb-1 mb-4">Work Experience</h3>
+        <ul class="space-y-3 text-sm">
+          <li><strong>2025:</strong> Teaching internship at Mulernes Legatskole (High School)</li>
+          <li><strong>2022–2023:</strong> Math tutor (8th–10th grade), Ungdomshuset Odense</li>
+          <li><strong>2022:</strong> Substitute teacher for 10th grade, UngOdense</li>
+        </ul>
+      </section>
+
+      <section class="mt-8">
+        <h3 class="text-lg font-semibold border-b pb-1 mb-4">IT Skills</h3>
+        <p class="text-sm">Python, Java, Matlab, R, C++</p>
+      </section>
+
+      <section class="mt-8">
+        <h3 class="text-lg font-semibold border-b pb-1 mb-4">Languages</h3>
+        <p class="text-sm">Danish (native), English (fluent)</p>
+      </section>
+    </div>
   </main>
 
   <footer class="bg-white border-t mt-12 py-4">
     <div class="max-w-4xl mx-auto text-center text-sm text-gray-500">
-      © 2025 Tobias Sjögreen · Built with Tailwind CSS · <a href="index.html" class="text-blue-500 hover:underline">Homepage</a>
+      2025 Tobias Sjögreen · <a href="index.html" class="text-blue-500 hover:underline">Forside / Homepage</a>
     </div>
   </footer>
 </body>
