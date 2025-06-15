@@ -1,17 +1,130 @@
 <!DOCTYPE html>
-<html lang="da">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Projekt 1 – Tobias Sjögreen</title>
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <title>Learning Physics from Data: An Illustrated Guide to SINDy</title>
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <style>
+    body { font-family: Georgia, serif; line-height: 1.6; margin: 2rem; max-width: 800px; }
+    h1, h2, h3 { color: #003366; }
+    code { background: #f4f4f4; padding: 2px 4px; }
+    pre { background: #f9f9f9; padding: 1rem; overflow-x: auto; }
+    blockquote { border-left: 3px solid #ccc; padding-left: 1rem; color: #555; }
+  </style>
 </head>
-<body class="bg-gray-100 text-gray-800">
-  <main class="max-w-3xl mx-auto py-20 px-6 text-center">
-    <h1 class="text-3xl font-bold mb-4">Projekt 1</h1>
-    <p class="text-lg text-gray-600">Jeg er i gang med at bygge denne side.</p>
-    <p class="text-sm text-gray-500 mt-2">This page is under construction.</p>
-    <a href="../index.html" class="mt-6 inline-block text-blue-500 hover:underline">← Tilbage til forsiden</a>
-  </main>
+<body>
+
+<h1>Learning Physics from Data: An Illustrated Guide to SINDy</h1>
+
+<h2>Introduction</h2>
+<p>Can we rediscover the laws of physics — just from data? That's the powerful question behind SINDy, or <strong>Sparse Identification of Nonlinear Dynamical Systems</strong>.</p>
+
+<p>Unlike many machine learning tools that act like black boxes, SINDy aims to build interpretable mathematical models: actual equations that describe how systems evolve in time. It's a bridge between physics and data science, offering a way to reverse-engineer the rules of dynamical systems from time series observations.</p>
+
+<h2>How SINDy Works</h2>
+<p>SINDy starts with a simple assumption: that the dynamics of a system can be described by a set of ordinary differential equations (ODEs):</p>
+
+<p>\[
+\frac{d\mathbf{x}}{dt} = \mathbf{f}(\mathbf{x})
+\]</p>
+
+<p>We assume \( \mathbf{f} \) can be expressed as a <strong>sparse linear combination</strong> of known nonlinear functions:</p>
+
+<p>\[
+\frac{d\mathbf{x}}{dt} \approx \Theta(\mathbf{x}) \Xi
+\]</p>
+
+<ul>
+  <li>\( \Theta(\mathbf{x}) \): library of possible functions (e.g. \( x, x^2, \sin(x), xy, \ldots \))</li>
+  <li>\( \Xi \): coefficient matrix (most entries are zero)</li>
+</ul>
+
+<h3>Step-by-step Overview</h3>
+<ol>
+  <li>Collect time-series data \( \mathbf{x}(t) \)</li>
+  <li>Estimate time derivatives \( \dot{\mathbf{x}}(t) \)</li>
+  <li>Build a feature library \( \Theta(\mathbf{x}) \)</li>
+  <li>Solve for sparse coefficients \( \Xi \)</li>
+</ol>
+
+<h2>The STLSQ Algorithm</h2>
+<p>The algorithm used to enforce sparsity is often called <strong>Sequentially Thresholded Least Squares (STLSQ)</strong>:</p>
+
+<ol>
+  <li>Start with a least-squares fit: \( \Xi = \Theta^\dagger \dot{\mathbf{x}} \)</li>
+  <li>Set small coefficients below threshold \( \lambda \) to zero</li>
+  <li>Refit only the remaining terms</li>
+  <li>Repeat until convergence</li>
+</ol>
+
+<h3>Python Example</h3>
+<pre><code>from sklearn.linear_model import LinearRegression
+xi = np.linalg.lstsq(Theta, dxdt, rcond=None)[0]
+
+for _ in range(max_iter):
+    small_idxs = np.abs(xi) < threshold
+    xi[small_idxs] = 0
+    big_idxs = ~small_idxs
+    xi[big_idxs] = np.linalg.lstsq(Theta[:, big_idxs], dxdt, rcond=None)[0]
+</code></pre>
+
+<h2>What Does a Library Look Like?</h2>
+<p>For example, if \( \mathbf{x} = [x, y, z] \), a degree-2 polynomial library would include:</p>
+
+<p>\[
+\Theta(\mathbf{x}) = [1, x, y, z, x^2, xy, xz, y^2, yz, z^2]
+\]</p>
+
+<h2>Example 1: Lorenz System</h2>
+<p>We simulate and rediscover the famous Lorenz equations:</p>
+
+<p>\[
+\begin{aligned}
+\frac{dx}{dt} &= \sigma(y - x) \\
+\frac{dy}{dt} &= x(\rho - z) - y \\
+\frac{dz}{dt} &= xy - \beta z
+\end{aligned}
+\]</p>
+
+<p><strong>[Insert 3D plot: Lorenz trajectory vs. predicted trajectory]</strong></p>
+
+<h2>Example 2: Sampling and Noise</h2>
+<p>We test how SINDy performs when:</p>
+<ul>
+  <li>Sampling rate is low (undersampled systems)</li>
+  <li>Measurements are noisy (real-world data)</li>
+</ul>
+
+<p><strong>[Insert plot: Accuracy vs. sampling rate]</strong><br>
+<strong>[Insert plot: Model recovery vs. noise level]</strong></p>
+
+<h2>Example 3: Minimal Data Discovery</h2>
+<p>How little data do we need to discover a model? We try different combinations of:</p>
+<ul>
+  <li>Time span</li>
+  <li>Time resolution (steps)</li>
+</ul>
+
+<p>Then we compare minimal vs. full trajectory discovery.</p>
+
+<p><strong>[Insert heatmap: Time span vs. resolution]</strong><br>
+<strong>[Insert 3D plot: Minimal vs. full trajectory]</strong></p>
+
+<hr>
+
+<h2>References</h2>
+<ol>
+  <li>Brunton, S. L., Proctor, J. L., & Kutz, J. N. (2016). <em>Discovering governing equations from data by sparse identification of nonlinear dynamical systems</em>. <strong>PNAS</strong>, 113(15), 3932–3937. <a href="https://doi.org/10.1073/pnas.1517384113">DOI</a></li>
+
+  <li>Kaheman, K., Kutz, J. N., & Brunton, S. L. (2022). <em>SINDy sampling strategies</em>. arXiv:2202.11638. <a href="https://arxiv.org/abs/2202.11638">Link</a></li>
+
+  <li>De Silva, B. M., Champion, K., & Brunton, S. L. (2020). <em>Multiscale modeling of dynamical systems using sparse identification</em>. Phys. Rev. E, 101(1), 013311. <a href="https://doi.org/10.1103/PhysRevE.101.013311">DOI</a></li>
+
+  <li>Kaptanoglu, A. A., et al. (2022). <em>PySINDy: A Python package for sparse identification of nonlinear dynamical systems</em>. <strong>JOSS</strong>, 7(76), 4596. <a href="https://joss.theoj.org/papers/10.21105/joss.04596">DOI</a></li>
+
+  <li><strong>PySINDy GitHub:</strong> <a href="https://github.com/dynamicslab/pysindy">https://github.com/dynamicslab/pysindy</a></li>
+</ol>
+
 </body>
 </html>
