@@ -2,16 +2,109 @@
 <html lang="da">
 <head>
   <meta charset="UTF-8">
+  <title>Learning Physics from Data: A Visual Introduction to DMD</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Projekt 2 – Tobias Sjögreen</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <style>
+    body { font-family: Georgia, serif; line-height: 1.6; }
+    code { background: #f4f4f4; padding: 2px 4px; }
+    pre { background: #f9f9f9; padding: 1rem; overflow-x: auto; }
+    blockquote { border-left: 3px solid #ccc; padding-left: 1rem; color: #555; }
+  </style>
 </head>
 <body class="bg-gray-100 text-gray-800">
-  <main class="max-w-3xl mx-auto py-20 px-6 text-center">
-    <h1 class="text-3xl font-bold mb-4">Projekt 2</h1>
-    <p class="text-lg text-gray-600">Jeg er i gang med at bygge denne side.</p>
-    <p class="text-sm text-gray-500 mt-2">This page is under construction.</p>
-    <a href="../index.html" class="mt-6 inline-block text-blue-500 hover:underline">← Tilbage til forsiden</a>
-  </main>
+
+<header class="bg-white shadow-md">
+  <div class="max-w-6xl mx-auto flex items-center justify-between p-6">
+    <div class="flex items-center space-x-4">
+      <a href="../index.html">
+        <img src="../assets/tobias.jpg" alt="Tobias Sjögreen" class="w-16 h-16 rounded-full border-2 border-gray-300">
+      </a>
+      <div>
+        <h1 class="text-xl font-bold">Tobias Sjögreen</h1>
+        <p class="text-sm text-gray-600">Anvendt Matematiker · Applied Mathematician</p>
+      </div>
+    </div>
+    <div class="space-x-4">
+      <a href="../cv.html" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">CV (DA)</a>
+      <a href="../cv_en.html" class="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600">CV (EN)</a>
+    </div>
+  </div>
+</header>
+
+<main class="max-w-3xl mx-auto py-10 px-4 bg-white rounded shadow">
+  <a href="../index.html" class="text-blue-600 hover:underline mb-4 inline-block">&larr; Tilbage til forsiden</a>
+
+  <h1 class="text-2xl font-bold mb-4">Understanding Dynamic Mode Decomposition (DMD)</h1>
+
+  <h2 class="text-xl font-semibold mt-8 mb-2">Introduction</h2>
+  <p>Dynamic Mode Decomposition (DMD) is a powerful tool for analyzing complex, time-dependent systems from data. It separates the system into modes that evolve with fixed frequencies and growth/decay rates — helping us understand both spatial patterns and temporal dynamics.</p>
+
+  <h2 class="text-xl font-semibold mt-8 mb-2">How DMD Works</h2>
+  <p>DMD assumes you have snapshots of a system over time: \( x_1, x_2, ..., x_m \), where each snapshot is a column vector.</p>
+
+  <p>We arrange the data into two matrices:</p>
+  <p>\[
+  X = [x_1, x_2, ..., x_{m-1}], \quad X' = [x_2, x_3, ..., x_m]
+  \]</p>
+
+  <p>DMD finds a matrix \( A \) such that:</p>
+  <p>\[
+  X' \approx A X
+  \]</p>
+
+  <p>We compute the best-fit linear operator and extract its eigenvalues and eigenvectors using SVD and low-rank projection.</p>
+
+  <h3 class="text-lg font-semibold mt-6 mb-2">Key Concepts</h3>
+  <ul class="list-disc ml-6">
+    <li><strong>Modes:</strong> spatial patterns (eigenvectors of \( A \))</li>
+    <li><strong>Eigenvalues:</strong> describe growth/decay and oscillation</li>
+    <li><strong>Amplitudes:</strong> how much each mode contributes initially</li>
+    <li><strong>Dynamics:</strong> time evolution of each mode</li>
+  </ul>
+
+  <h2 class="text-xl font-semibold mt-8 mb-2">Example 1: Two Blinking Regions</h2>
+  <p>We simulate a synthetic system with two Gaussian blobs blinking at different rates. Each has different frequency and amplitude.</p>
+
+  <p><strong>[Insert animation or 2D video of blinking blobs over time]</strong></p>
+
+  <p>Applying DMD allows us to recover:</p>
+  <ul class="list-disc ml-6">
+    <li>Two dominant spatial modes</li>
+    <li>Distinct frequencies from eigenvalues</li>
+    <li>Reconstruction close to original frames</li>
+  </ul>
+
+  <p><strong>[Insert plot: modes and eigenvalues on complex plane]</strong></p>
+
+  <h2 class="text-xl font-semibold mt-8 mb-2">Example 2: Simulated Protein Transport</h2>
+  <p>We simulate a FLIP (Fluorescence Loss In Photobleaching) experiment in a virtual cell with a nucleus and cytoplasm. Proteins diffuse and exchange between regions, and photobleaching causes decay over time.</p>
+
+  <p><strong>[Insert animation of simulated FLIP data]</strong><br>
+     <strong>[Insert plot: DMD reconstruction vs. original]</strong></p>
+
+  <h2 class="text-xl font-semibold mt-8 mb-2">Example 3: Real Experimental FLIP Data</h2>
+  <p>We apply DMD to actual FLIP microscopy data. By analyzing the modes and their dynamics, we gain insights into transport kinetics and compartment-specific decay behavior.</p>
+
+  <p><strong>[Insert results: Eigenvalues, dynamics, reconstruction]</strong></p>
+
+  <hr class="my-8">
+  <h2 class="text-xl font-semibold mt-8 mb-2">References</h2>
+  <ol class="list-decimal ml-6">
+    <li>Schmid, P. J. (2010). <em>Dynamic mode decomposition of numerical and experimental data</em>. Journal of Fluid Mechanics, 656, 5–28.</li>
+    <li>Kutz, J. N., et al. (2016). <em>Dynamic Mode Decomposition: Data-Driven Modeling of Complex Systems</em>. SIAM.</li>
+    <li>Brunton, S. L., & Kutz, J. N. (2022). <em>Data-Driven Science & Engineering</em>. Cambridge University Press.</li>
+    <li><strong>pyDMD GitHub:</strong> <a href="https://github.com/mathLab/PyDMD">https://github.com/mathLab/PyDMD</a></li>
+    <li><strong>DMD in Cell Biology:</strong> Michalopoulou, A. et al. (2022). <em>DMD analysis of protein transport using FLIP microscopy</em>. Sensors 22(18), 4731.</li>
+  </ol>
+</main>
+
+<footer class="bg-white border-t mt-12 py-4">
+  <div class="max-w-6xl mx-auto text-center text-sm text-gray-500">
+    Kontakt / Contact: tobias.sjoegreen@gmail.com · Odense · © 2025
+  </div>
+</footer>
 </body>
 </html>
