@@ -28,110 +28,312 @@
         </div>
       </div>
       <div class="space-x-4">
-        <a href="../cv.html" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">CV (DA)</a>
-        <a href="../cv_en.html" class="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600">CV (EN)</a>
+        <a href="../cv.html" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">CV / Resume</a>
       </div>
     </div>
   </header>
 
   <main class="max-w-3xl mx-auto py-10 px-4 bg-white rounded shadow">
-    <a href="../index.html" class="text-blue-600 hover:underline mb-4 inline-block">&larr; Tilbage til forsiden</a>
+    <a href="../index.html" class="text-blue-600 hover:underline mb-4 inline-block">&larr; Back to the Front Page</a>
 
     <h1 class="text-2xl font-bold mb-4">Learning Physics from Data: An Illustrated Guide to SINDy</h1>
 
-    <h2 class="text-xl font-semibold mt-8 mb-2">Introduction</h2>
-    <p>Can we rediscover the laws of physics — just from data? That's the powerful question behind SINDy, or <strong>Sparse Identification of Nonlinear Dynamical Systems</strong>.</p>
+    <section id="sindy-introduction">
+      <h2>Introduction to SINDy</h2>
+      <p>
+        The Sparse Identification of Nonlinear Dynamics (SINDy) is a modern data-driven method for discovering governing equations of dynamical systems directly from measurement data. 
+        Unlike traditional black-box approaches, SINDy aims to extract interpretable and parsimonious models that reflect the underlying physics or structure of a system.
+      </p>
+      <p>
+        Many real-world systems—ranging from climate models to fluid dynamics, neuroscience, and epidemiology—produce vast quantities of data, while their underlying equations remain unknown. 
+        SINDy addresses this challenge by assuming that the dynamics of these systems are governed by only a few key terms, even when considered in a high-dimensional nonlinear function space.
+      </p>
+      <p>
+        The method uses sparse regression to identify the fewest terms needed to describe the system's evolution over time. This leads to models that are both accurate and simple, avoiding the risk of overfitting. 
+        By doing so, SINDy bridges the gap between data science and traditional mathematical modeling.
+      </p>
+      <p>
+        In this project, we demonstrate how SINDy can be applied to various dynamical systems, starting with well-known examples like the Lorenz system and extending to multiscale systems. 
+        Our goal is to showcase the power of sparse modeling in uncovering the true structure of complex, nonlinear dynamics using only data.
+      </p>
+    </section>
 
-    <p>Unlike many machine learning tools that act like black boxes, SINDy aims to build interpretable mathematical models: actual equations that describe how systems evolve in time. It's a bridge between physics and data science, offering a way to reverse-engineer the rules of dynamical systems from time series observations.</p>
+    <section id="sindy-deep">
+      <h2>Chapter 1: Discovering Differential Equations from Data using SINDy</h2>
+      <p>
+        Many systems in nature and engineering evolve over time in complex ways — from weather patterns and ecological populations to chemical reactions and robot motion. These systems are typically modeled by differential equations. But what if we don’t know the equations? What if we only have data — time-series measurements of how the system behaves?
+      </p>
+      <p>
+        This is the setting where the <strong>Sparse Identification of Nonlinear Dynamical Systems (SINDy)</strong> algorithm becomes powerful. SINDy is a technique for discovering governing equations from data, under the assumption that the underlying dynamics can be expressed by a small number of active terms from a larger set of possibilities. This sparsity assumption reflects the observation that real-world physical systems are often governed by simple laws — Newton’s laws, chemical kinetics, etc. — even if their behavior looks complicated.
+      </p>
+      <p>
+        Suppose we observe a system’s state \\( \mathbf{x}(t) \in \mathbb{R}^n \\) over time. The system evolves according to some unknown rule \\( \frac{d\mathbf{x}}{dt} = \mathbf{f}(\mathbf{x}) \\). Our goal is to recover the form of \\( \mathbf{f} \\) — ideally as an explicit set of differential equations — using only measurements of \\( \mathbf{x}(t) \\). 
+      </p>
+      <p>
+        We begin by collecting a dataset \\( X \in \mathbb{R}^{m \times n} \\), where each row is a sample \\( \mathbf{x}(t_i) \\), and estimate the time derivatives \\( \dot{X} \in \mathbb{R}^{m \times n} \\) using finite differences. For example, if \\( n = 2 \\), and our variables are \\( x \\) and \\( y \\), a single row in \\( X \\) might be \\( [1.2, -0.5] \\), and its derivative \\( [0.8, 0.4] \\).
+      </p>
+      <p>
+        The key insight of SINDy is to model each time derivative \\( \dot{x}_i \\) as a sparse linear combination of nonlinear functions of the state — polynomials, trigonometric functions, or others. To formalize this, we construct a <strong>function library</strong> \\( \Theta(X) \\), which contains columns like:
+      </p>
+      <pre><code>
+[1, x, y, x^2, xy, y^2]
+      </code></pre>
+      <p>
+        Let’s see this concretely. Suppose \\( x = 2 \\) and \\( y = -1 \\), then:
+        \[
+        \Theta([x, y]) = [1, 2, -1, 4, -2, 1]
+        \]
+        Each of these terms could be part of the true governing equation. So we assume:
+        \[
+        \dot{\mathbf{x}} = \Theta(X) \cdot \Xi
+        \]
+        where \\( \Xi \in \mathbb{R}^{p \times n} \\) is a coefficient matrix we want to identify. Each column in \\( \Xi \\) represents the active terms for one variable’s time derivative. Most of \\( \Xi \\)’s entries should be zero if the true system is sparse.
+      </p>
+      <p>
+        To recover \\( \Xi \\), we solve a <em>sparse regression problem</em>. One efficient and simple method is the <strong>STLSQ algorithm (Sequential Thresholded Least Squares)</strong>, which alternates between fitting a standard linear model and removing small coefficients. Here's how it works in Python:
+      </p>
+      <pre><code class="language-python">
+def STLSQ(Theta, dXdt, threshold=0.1, max_iter=10):
+    Xi = np.linalg.lstsq(Theta, dXdt, rcond=None)[0]
+    for _ in range(max_iter):
+        small = np.abs(Xi) < threshold
+        Xi[small] = 0
+        for i in range(dXdt.shape[1]):
+            big = ~small[:, i]
+            if np.any(big):
+                Xi[big, i] = np.linalg.lstsq(Theta[:, big], dXdt[:, i], rcond=None)[0]
+    return Xi
+      </code></pre>
+      <p>
+        This algorithm allows us to find a sparse \\( \Xi \\), which leads directly to symbolic differential equations. Now let’s apply the method to the famous Lorenz system, defined by:
+      </p>
+      <p>
+        \[
+        \begin{aligned}
+        \frac{dx}{dt} &= 10(y - x) \\
+        \frac{dy}{dt} &= x(28 - z) - y \\
+        \frac{dz}{dt} &= xy - \frac{8}{3}z
+        \end{aligned}
+        \]
+        We simulate this system numerically to generate our data \\( X \\), and then build \\( \Theta(X) \\) using polynomial terms up to degree 2. This includes terms like \\( x, y, z, x^2, xy, xz, y^2, yz, z^2 \\). We compute \\( \dot{X} \\) numerically, and apply STLSQ to fit \\( \Xi \\).
+      </p>
+      <p>
+        The resulting discovered model might look like this:
+      </p>
+      <pre><code>
+(x0)' = -10.003 x0 + 10.003 x1
+(x1)' = 27.804 x0 - 0.953 x1 - 0.994 x0 x2
+(x2)' = -2.667 x2 + 0.999 x0 x1
+      </code></pre>
+      <p>
+        These are impressively close to the true Lorenz equations, even though the model was discovered purely from data.
+      </p>
+      <p>
+        The following plot shows the original Lorenz attractor generated by integrating the true system:
+      </p>
+      <img src="../assets/Lorenz_10000.png" alt="Lorenz Attractor" style="max-width: 100%;" />
+      <p>
+        We then simulate the discovered SINDy model using the learned coefficients, and compare its trajectory to the original system:
+      </p>
+      <img src="../assets/Model_v_true_system.png" alt="SINDy vs True System" style="max-width: 100%;" />
+      <p>
+        At first, the trajectories match very closely. Over time, they diverge — this is not a failure, but a natural result of the system’s chaos. Chaotic systems are extremely sensitive to initial conditions and parameters. What matters is that the discovered model reproduces the global behavior: the strange attractor, the structure, and the correct terms in the governing equations.
+      </p>
+    </section>
 
-    <h2 class="text-xl font-semibold mt-8 mb-2">How SINDy Works</h2>
-    <p>SINDy starts with a simple assumption: that the dynamics of a system can be described by a set of ordinary differential equations (ODEs):</p>
+    <section id="chaotic-systems">
+      <h2>Chapter 2: Comparing Four Nonlinear Dynamical Systems</h2>
+      <p>
+        In this chapter, we examine four classical nonlinear systems, each exhibiting different types of dynamical behavior. These systems — Lorenz, Rössler, Thomas, and Chen — are defined by autonomous differential equations in three variables, and serve as prototypical examples of chaos and complex attractors.
+      </p>
+      <p>
+        The goal is to understand and compare their behavior using geometric, numerical, and algorithmic perspectives. One key analytical tool we use is the <strong>largest Lyapunov exponent</strong>, \\( \lambda_1 \\), which measures how sensitive the system is to initial conditions — the higher the exponent, the more chaotic the system.
+      </p>
+      <p>
+        Additionally, we analyze the ability of the SINDy algorithm to recover each system’s governing equations. This requires building an appropriate feature library \\( \Theta(X) \\). Most systems can be well-approximated using a polynomial library, but others — like the Thomas system — demand special functional terms, such as trigonometric functions.
+      </p>
+      <h3>Lorenz System</h3>
+      <p>
+        With standard parameters \\( \sigma = 10, \rho = 28, \beta = 8/3 \\), the Lorenz system exhibits strong chaos (\\( \lambda_1 \approx 0.905 \\)). The system has a double-lobed strange attractor and produces rapidly diverging but bounded trajectories.
+      </p>
+      <p><strong>SINDy Recovered Model:</strong></p>
+      <pre><code>
+(x0)' = -10.003 x0 + 10.003 x1
+(x1)' = 27.804 x0 - 0.953 x1 - 0.994 x0 x2
+(x2)' = -2.667 x2 + 0.999 x0 x1
+      </code></pre>
+      <h3>Rössler System</h3>
+      <p>
+        The Rössler system (\\( a = 0.2, b = 0.2, c = 5.7 \\)) has milder chaotic behavior (\\( \lambda_1 \approx 0.07 \\)) and produces a single-scroll attractor. Its geometry is mostly planar with a slow spiraling out in the z-direction.
+      </p>
+      <p><strong>SINDy Recovered Model:</strong></p>
+      <pre><code>
+(x0)' = -0.999 x1 + -0.995 x2
+(x1)' = 0.999 x0 + 0.200 x1
+(x2)' = 0.196 1 + -5.610 x2 + 0.985 x0 x2
+      </code></pre>
+      <h3>Thomas System</h3>
+      <p>
+        The Thomas cyclic system, often run with \\( b = 0.18 \\), behaves quite differently. It has a looped attractor and low-to-moderate chaos (\\( \lambda_1 \approx 0.16 \\)). Its dynamics are fundamentally based on trigonometric nonlinearity — making it <strong>invisible</strong> to SINDy if only polynomial terms are used.
+      </p>
+      <p>
+        Attempting to recover Thomas using a standard polynomial library results in complete failure. The STLSQ optimizer returns zero coefficients and raises a warning:
+      </p>
+      <pre><code>
+(x0)' = 0.000
+(x1)' = 0.000
+(x2)' = 0.000
+# Warning: Sparsity parameter is too big (0.1) and eliminated all coefficients
+      </code></pre>
+      <p>
+        The reason is that the true dynamics depend on \\( \sin(x_i) \\), which is entirely missing from a polynomial library. To successfully model the Thomas system, we must explicitly include sinusoidal terms in \\( \Theta(X) \\), such as \\( \sin(x), \sin(y), \sin(z) \\). When we do so, the correct model is identified:
+      </p>
+      <pre><code>
+(x0)' = -0.190 x0 + 1.001 sin(x1)
+(x1)' = -0.190 x1 + 1.001 sin(x2)
+(x2)' = -0.190 x2 + 1.001 sin(x0)
+      </code></pre>
+      <p>
+        This highlights a crucial insight: the success of SINDy critically depends on choosing a function library that is expressive enough to contain the true system structure. The Thomas system serves as a clear example of a mismatch between library and system.
+      </p>
+      <h3>Chen System</h3>
+      <p>
+        The Chen system (\\( a = 35, b = 3, c = 28 \\)) is structurally similar to the Lorenz system but more chaotic (\\( \lambda_1 \approx 2.0 \\)). It produces a stretched, complex attractor with rapid divergence of nearby states. The SINDy algorithm performs well under the right library settings:
+      </p>
+      <pre><code>
+(x0)' = -34.996 x0 + 34.997 x1
+(x1)' = -7.041 x0 + 27.915 x1 + -0.993 x0 x2
+(x2)' = 0.520 1 + -3.031 x2 + 0.998 x0 x1
+      </code></pre>
+      <h3>Summary of Dynamical and SINDy Behavior</h3>
+      <table border="1" cellpadding="6" style="border-collapse: collapse;">
+        <thead>
+          <tr>
+            <th>System</th>
+            <th>Lyapunov Exponent (λ₁)</th>
+            <th>Chaos Strength</th>
+            <th>Attractor Type</th>
+            <th>Library Type Needed</th>
+            <th>SINDy Recovery</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Lorenz</td>
+            <td>≈ 0.905</td>
+            <td>Strong</td>
+            <td>Double-lobed</td>
+            <td>Polynomial (deg 2)</td>
+            <td>Excellent</td>
+          </tr>
+          <tr>
+            <td>Rössler</td>
+            <td>≈ 0.07</td>
+            <td>Mild</td>
+            <td>Spiral</td>
+            <td>Polynomial (deg 2)</td>
+            <td>Good</td>
+          </tr>
+          <tr>
+            <td>Thomas</td>
+            <td>≈ 0.16</td>
+            <td>Weak</td>
+            <td>Toroidal</td>
+            <td><strong>Trig. + Poly</strong></td>
+            <td>Fails without sin(x)</td>
+          </tr>
+          <tr>
+            <td>Chen</td>
+            <td>≈ 2.0</td>
+            <td>Very Strong</td>
+            <td>Irregular chaotic</td>
+            <td>Polynomial (deg 2)</td>
+            <td>Very Good</td>
+          </tr>
+        </tbody>
+      </table>
+      <p>
+        The contrast between the systems emphasizes the importance of choosing the right functional basis when applying sparse identification methods like SINDy. While polynomial libraries are effective for Lorenz, Rössler, and Chen, they are inadequate for systems like Thomas, whose dynamics lie outside the polynomial span.
+      </p>
+      <p>
+        Below is a composite visualization comparing the phase space trajectories of all four systems:
+      </p>
+      <img src="../assets/Four_attractors.png" alt="Comparison of Dynamical Systems and Attractors" style="max-width: 100%;" />
+      <p>
+        In the next chapter, we will explore how data quality (e.g., sampling rate or noise level) affects the ability of SINDy to recover these systems — particularly the more sensitive or weakly chaotic ones like Thomas and Rössler.
+      </p>
+    </section>
 
-    <p>\[
-    \frac{d\mathbf{x}}{dt} = \mathbf{f}(\mathbf{x})
-    \]</p>
+    <section id="sindy-subsampling">
+      <h2>Chapter 3: How Much Data Is Enough? Subsampling and Model Recovery</h2>
+      <p>
+        One of the central practical questions when using SINDy is how much data is required to identify the correct model structure. Real-world systems are rarely measured with unlimited precision and density, so understanding the trade-off between sampling resolution and model fidelity is crucial.
+      </p>
+      <p>
+        To investigate this, we apply a systematic subsampling procedure. Starting from full-resolution simulations, we reduce the number of time points used to fit the model. For each reduced dataset, a SINDy model is trained using either a polynomial library or a combination of polynomial and trigonometric terms. We compare the resulting model's term structure to the ground truth: if all active terms match exactly, the structure is considered correct. We also compute the relative error in the coefficient values when applicable.
+      </p>
+      <p>
+        The results vary substantially across systems:
+      </p>
+      <h3>Rössler System (Polynomial Library)</h3>
+      <p>
+        With 10000 and 5000 data points, the correct structure is recovered, and the coefficient deviation remains low (1.52% and 6.38% respectively). However, below 1000 points, structural recovery fails entirely. This suggests that for moderately chaotic systems like Rössler, a threshold of around 5000 samples is needed for accurate recovery using standard polynomial features.
+      </p>
+      <h3>Rössler System (Trigonometric + Polynomial Library)</h3>
+      <p>
+        Adding trigonometric functions to the library does not improve recovery for Rössler. The same thresholds apply, indicating that the underlying dynamics are well captured by polynomials alone and that additional basis terms are unnecessary or redundant in this case.
+      </p>
+      <h3>Thomas System (Trigonometric + Polynomial Library)</h3>
+      <p>
+        The Thomas system is structurally dependent on sine interactions, and polynomial-only libraries fail to capture its dynamics. When trigonometric terms are included, the model is correctly identified with as few as 500 samples, and remains robust even at 1000 and 500 points. Only at 200 points and below does the structure degrade. This highlights the importance of including appropriate nonlinearities in the function library, especially when the true system is not polynomial in nature.
+      </p>
+      <h3>Shimizu-Morioka System (Polynomial Library)</h3>
+      <p>
+        The Shimizu-Morioka system is correctly recovered using a polynomial library with 5000 points or more. Below this threshold, the model fails to identify the correct terms. Introducing trigonometric terms in this case harms performance, suggesting that these additional features introduce unnecessary variance or aliasing, masking the sparse structure of the true system.
+      </p>
+      <h3>Chen System</h3>
+      <p>
+        The Chen system cannot be identified correctly in any tested configuration — not with 10000 points, nor with either library type. The recovered models are structurally incorrect across all sampling levels. This suggests that the Chen system either lies outside the expressiveness of the current library functions or is particularly sensitive to sampling and noise, possibly due to its highly nonlinear and stiff dynamics. Its coefficient scales and interactions may require adaptive thresholds, weighted fitting, or entirely different identification strategies.
+      </p>
+      <p>
+        This experiment demonstrates that the success of model discovery depends not only on the amount of data available, but on the compatibility between the chosen library and the system’s true dynamics. Even with thousands of samples, incorrect library choice renders recovery impossible. Meanwhile, well-matched libraries can uncover sparse governing equations from surprisingly little data.
+      </p>
+    </section>
 
-    <p>We assume \( \mathbf{f} \) can be expressed as a <strong>sparse linear combination</strong> of known nonlinear functions:</p>
-
-    <p>\[
-    \frac{d\mathbf{x}}{dt} \approx \Theta(\mathbf{x}) \Xi
-    \]</p>
-
-    <ul class="list-disc ml-6">
-      <li>\( \Theta(\mathbf{x}) \): library of possible functions (e.g. \( x, x^2, \sin(x), xy, \ldots \))</li>
-      <li>\( \Xi \): coefficient matrix (most entries are zero)</li>
-    </ul>
-
-    <h3 class="text-lg font-semibold mt-6 mb-2">Step-by-step Overview</h3>
-    <ol class="list-decimal ml-6">
-      <li>Collect time-series data \( \mathbf{x}(t) \)</li>
-      <li>Estimate time derivatives \( \dot{\mathbf{x}}(t) \)</li>
-      <li>Build a feature library \( \Theta(\mathbf{x}) \)</li>
-      <li>Solve for sparse coefficients \( \Xi \)</li>
-    </ol>
-
-    <h2 class="text-xl font-semibold mt-8 mb-2">The STLSQ Algorithm</h2>
-    <p>The algorithm used to enforce sparsity is often called <strong>Sequentially Thresholded Least Squares (STLSQ)</strong>:</p>
-
-    <ol class="list-decimal ml-6">
-      <li>Start with a least-squares fit: \( \Xi = \Theta^\dagger \dot{\mathbf{x}} \)</li>
-      <li>Set small coefficients below threshold \( \lambda \) to zero</li>
-      <li>Refit only the remaining terms</li>
-      <li>Repeat until convergence</li>
-    </ol>
-
-    <h3 class="text-lg font-semibold mt-6 mb-2">Python Example</h3>
-    <pre><code>from sklearn.linear_model import LinearRegression
-xi = np.linalg.lstsq(Theta, dxdt, rcond=None)[0]
-
-for _ in range(max_iter):
-    small_idxs = np.abs(xi) < threshold
-    xi[small_idxs] = 0
-    big_idxs = ~small_idxs
-    xi[big_idxs] = np.linalg.lstsq(Theta[:, big_idxs], dxdt, rcond=None)[0]
-</code></pre>
-
-    <h2 class="text-xl font-semibold mt-8 mb-2">What Does a Library Look Like?</h2>
-    <p>For example, if \( \mathbf{x} = [x, y, z] \), a degree-2 polynomial library would include:</p>
-
-    <p>\[
-    \Theta(\mathbf{x}) = [1, x, y, z, x^2, xy, xz, y^2, yz, z^2]
-    \]</p>
-
-    <h2 class="text-xl font-semibold mt-8 mb-2">Example 1: Lorenz System</h2>
-    <p>We simulate and rediscover the famous Lorenz equations:</p>
-
-    <p>\[
-    \begin{aligned}
-    \frac{dx}{dt} &= \sigma(y - x) \\
-    \frac{dy}{dt} &= x(\rho - z) - y \\
-    \frac{dz}{dt} &= xy - \beta z
-    \end{aligned}
-    \]</p>
-
-    <p><strong>[Insert 3D plot: Lorenz trajectory vs. predicted trajectory]</strong></p>
-
-    <h2 class="text-xl font-semibold mt-8 mb-2">Example 2: Sampling and Noise</h2>
-    <p>We test how SINDy performs when:</p>
-    <ul class="list-disc ml-6">
-      <li>Sampling rate is low (undersampled systems)</li>
-      <li>Measurements are noisy (real-world data)</li>
-    </ul>
-
-    <p><strong>[Insert plot: Accuracy vs. sampling rate]</strong><br>
-    <strong>[Insert plot: Model recovery vs. noise level]</strong></p>
-
-    <h2 class="text-xl font-semibold mt-8 mb-2">Example 3: Minimal Data Discovery</h2>
-    <p>How little data do we need to discover a model? We try different combinations of:</p>
-    <ul class="list-disc ml-6">
-      <li>Time span</li>
-      <li>Time resolution (steps)</li>
-    </ul>
-
-    <p>Then we compare minimal vs. full trajectory discovery.</p>
-
-    <p><strong>[Insert heatmap: Time span vs. resolution]</strong><br>
-    <strong>[Insert 3D plot: Minimal vs. full trajectory]</strong></p>
+    <section id="sindy-noise">
+      <h2>Chapter 4: Discovering Models Under Noise</h2>
+      <p>
+        Real-world measurements are never noise-free. Sensor errors, external disturbances, and system variability all contribute to noise in data, which can obscure the true underlying dynamics. For sparse model discovery methods like SINDy, which rely on accurate estimation of derivatives and term sparsity, this presents a major challenge.
+      </p>
+      <p>
+        To investigate how noise affects model identification, we performed a series of controlled experiments on two systems: the Rössler and the Shimizu-Morioka systems. These systems were chosen because they are structurally distinct, yet both were successfully recovered in noiseless scenarios under appropriate sampling conditions.
+      </p>
+      <p>
+        The experimental approach is as follows. For each system, we simulate a trajectory using standard parameters and initial conditions, producing a clean dataset. We then iteratively add Gaussian noise at increasing levels — measured as a percentage of the signal’s standard deviation — and attempt to fit a SINDy model to the noisy data. For each noise level, we evaluate whether the model structure (i.e., the location of nonzero coefficients) still matches the known true model. Once the structure fails to match, we stop and record the last successful noise level.
+      </p>
+      <p>
+        The goal is to determine the maximum level of noise that still allows successful recovery of the correct dynamical model. For this experiment, we tested noise levels from 1% up to 80%, and used a fixed feature library: a third-degree polynomial library with all interaction terms.
+      </p>
+      <h3>Rössler System</h3>
+      <p>
+        The Rössler system was able to tolerate up to <strong>1% additive noise</strong> before the SINDy model failed to identify the correct structure. Beyond this, spurious terms began to appear or key terms disappeared, indicating that even small noise levels introduce significant distortion in the derivative estimates or regression stability.
+      </p>
+      <p>
+        This low tolerance suggests that systems with mild chaotic behavior and smooth vector fields — like Rössler — are particularly sensitive to noise during sparse regression. Small deviations in the data lead to incorrect active term selection, likely due to changes in feature correlation and coefficient magnitudes near the threshold cutoff.
+      </p>
+      <img src="../assets/rosslernoise_1.png" alt="Rössler under 1% noise" style="max-width: 100%;" />
+      <h3>Shimizu-Morioka System</h3>
+      <p>
+        The Shimizu system, although nonlinear and containing multiplicative terms, also tolerated up to <strong>1% noise</strong>. Like Rössler, the model failed immediately beyond this point. Interestingly, the system appears to degrade sharply — there is no gradual increase in coefficient error, only a sudden failure in term identification.
+      </p>
+      <p>
+        This behavior suggests that, for the library and optimizer used, SINDy behaves like a threshold detector: either the true model is captured exactly, or it is not captured at all. There is limited robustness to small deviations, especially when no additional regularization or noise filtering is used.
+      </p>
+      <img src="../assets/shimizunoise_1.png" alt="Shimizu-Morioka under 1% noise" style="max-width: 100%;" />
+      <p>
+        From these findings, we conclude that SINDy is highly sensitive to noise — even small amounts can lead to incorrect model recovery. Accurate numerical differentiation and possibly denoising or smoothing preprocessing are essential if the method is to be applied to real, noisy data. Furthermore, the system’s structure and the distribution of its nonlinear terms strongly influence how resilient it is to corruption.
+      </p>
+    </section>
 
     <hr class="my-8">
 
