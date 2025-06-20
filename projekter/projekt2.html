@@ -1,17 +1,57 @@
 <!DOCTYPE html>
-<html lang="da">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Learning Physics from Data: A Visual Introduction to DMD</title>
+  <title>Learning governing equations from chaotic systems</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  
+    <!-- Tailwind CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+
+    <!-- Prism.js for beautiful code syntax highlighting -->
+    <link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-python.min.js"></script>
+
+    <!-- MathJax v3 -->
+    <script>
+    window.MathJax = {
+        tex: {
+        inlineMath: [['\\(', '\\)']],
+        displayMath: [['\\[', '\\]']]
+        }
+    };
+    </script>
+    <script id="MathJax-script" async
+    src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+    </script>
+
+
+  <!-- Custom styles for readability -->
   <style>
-    body { font-family: Georgia, serif; line-height: 1.6; }
-    code { background: #f4f4f4; padding: 2px 4px; }
-    pre { background: #f9f9f9; padding: 1rem; overflow-x: auto; }
-    blockquote { border-left: 3px solid #ccc; padding-left: 1rem; color: #555; }
+    body {
+      font-family: Georgia, serif;
+      line-height: 1.8;
+      background-color: #f9fafb;
+    }
+    code {
+      background-color: #f4f4f4;
+      padding: 0.2rem 0.4rem;
+      font-family: monospace;
+    }
+    pre {
+      background-color: #fefefe;
+      padding: 1rem;
+      border-left: 4px solid #cbd5e0;
+      overflow-x: auto;
+      margin-bottom: 2rem;
+    }
+    figcaption {
+      font-size: 0.875rem;
+      color: #4b5563;
+      text-align: center;
+      margin-top: 0.5rem;
+    }
   </style>
 </head>
 <body class="bg-gray-100 text-gray-800">
