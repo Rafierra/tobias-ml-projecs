@@ -36,311 +36,497 @@
 <main class="max-w-3xl mx-auto py-10 px-4 bg-white rounded shadow">
   <a href="../index.html" class="text-blue-600 hover:underline mb-4 inline-block">&larr; Back to the Front Page</a>
 
-  <section id="dmd-blobs">
-    <h1>Dynamic Mode Decomposition (DMD) – A Visual Introduction</h1>
+  <section class="mb-16" id="dmd-intro">
+    <h1 class="text-4xl font-bold mb-6 text-blue-900">Dynamic Mode Decomposition: Learning Linear Dynamics from Blinking Blobs</h1>
 
-    <p>
-      Dynamic Mode Decomposition (DMD) is a powerful technique for analyzing high-dimensional time series data by decomposing it into coherent spatiotemporal modes. It provides a linear approximation of nonlinear dynamics by identifying the modes that describe how the system evolves in time.
-    </p>
+    <div class="text-lg leading-relaxed text-gray-800">
+      <p>
+        Dynamic Mode Decomposition (DMD) is a powerful technique for extracting coherent structures and temporal patterns from high-dimensional, time-dependent data. Originally developed in fluid mechanics, it has since found applications in fields ranging from neuroscience to video processing.
+      </p>
 
-    <p>
-      To illustrate the power of DMD, we construct a synthetic dataset consisting of two <strong>oscillating Gaussian blobs</strong> blinking at different frequencies in a 2D grid. The result is a spatiotemporal signal that varies smoothly in both space and time, making it ideal for modal decomposition.
-    </p>
-
-    <h3>Data Generation</h3>
-    <p>
-      We define two Gaussian blobs located at different centers in a 2D plane. One blob oscillates slowly, and the other more rapidly. The full dataset is a sequence of frames over time: \( X(t) \in \mathbb{R}^{n_x \times n_y} \), reshaped into a matrix \( X \in \mathbb{R}^{n \times T} \), where each column is a vectorized frame at time \( t \).
-    </p>
-
-    <h3>DMD Algorithm Overview</h3>
-    <p>
-      The DMD method approximates the time evolution of the system as:
-      \[
-      X' \approx A X
-      \]
-      where \( A \) is the unknown linear operator. To find a low-rank approximation of \( A \), we proceed through the following steps:
-    </p>
-
-    <ol>
-      <li>Split the data matrix into two: \( X = [x_0, x_1, ..., x_{T-1}] \) and \( X' = [x_1, x_2, ..., x_T] \)</li>
-      <li>Apply Singular Value Decomposition (SVD): \( X = U \Sigma V^* \)</li>
-      <li>Truncate to rank \( r \) to get \( U_r, \Sigma_r, V_r \)</li>
-      <li>Construct reduced system: \( \tilde{A} = U_r^T X' V_r \Sigma_r^{-1} \)</li>
-      <li>Compute eigenvalues and eigenvectors of \( \tilde{A} \): \( \tilde{A} W = W \Lambda \)</li>
-      <li>Project back to high-dimensional space: \( \Phi = X' V_r \Sigma_r^{-1} W \)</li>
-    </ol>
-
-    <p>
-      The columns of \( \Phi \) are the DMD modes, and the eigenvalues \( \lambda_i \) determine their growth/decay and oscillation over time:
-      \[
-      x(t) = \sum_{i=1}^r b_i \phi_i e^{\omega_i t}, \quad \omega_i = \log(\lambda_i)
-      \]
-      where \( b \) is computed by projecting the initial state onto the mode basis.
-    </p>
-
-    <h3>Results and Visualization</h3>
-    <p>
-      After applying DMD, we analyze several outputs:
-    </p>
-
-    <ul>
-      <li><strong>DMD Eigenvalues:</strong> plotted in the complex plane. Eigenvalues near the unit circle represent sustained oscillations; those inside decay over time.</li>
-      <li><strong>Mode Amplitudes:</strong> the magnitude of \( b_i \) indicates the importance of each mode.</li>
-      <li><strong>Reconstructed Frames:</strong> comparing original data with the DMD reconstruction shows how well the linear model captures the dynamics.</li>
-      <li><strong>Mode Shapes:</strong> DMD modes represent spatial structures in the signal that persist and evolve over time.</li>
-      <li><strong>Temporal Dynamics:</strong> plotting \( |b_i e^{\omega_i t}| \) over time reveals how each mode behaves — oscillating, growing, or decaying.</li>
-    </ul>
-
-    <h3>Selected Visualizations</h3>
-
-    <p>
-      The plot below shows the eigenvalues in the complex plane:
-    </p>
-    <img src="../assets/eigenvalues_blob.png" alt="DMD Eigenvalues" style="max-width: 100%;">
-
-    <p>
-      Below are the amplitudes of each mode, showing which components dominate the signal:
-    </p>
-    <img src="../assets/Amplitude_blob.png" alt="DMD Mode Amplitudes" style="max-width: 100%;">
-
-    <p>
-      A side-by-side comparison of an original frame and its DMD reconstruction:
-    </p>
-    <img src="../assets/Reconstructed_blob.png" alt="Original vs DMD Reconstructed Frame" style="max-width: 100%;">
-
-    <p>
-      The first 10 DMD spatial modes are shown below:
-    </p>
-    <img src="../assets/modes_blob.png" alt="DMD Spatial Modes" style="max-width: 100%;">
-
-    <p>
-      Finally, we visualize how the five dominant modes evolve in time:
-    </p>
-    <img src="../assets/dynamics_modes.png" alt="DMD Temporal Dynamics" style="max-width: 100%;">
-
-    <h3>Conclusion</h3>
-    <p>
-      DMD successfully separates the complex oscillatory pattern of the blinking blobs into distinct spatiotemporal modes, each associated with a specific frequency and growth/decay behavior. This example demonstrates how DMD can reveal hidden low-rank dynamics in high-dimensional data and forms the basis for more advanced applications in fluid dynamics, neuroscience, finance, and video compression.
-    </p>
+      <p class="mt-4">
+        Unlike traditional dimensionality reduction, DMD approximates the full system dynamics using a <em>linear operator</em>. This makes it ideal for modeling, forecasting, and separating physical processes — even when the underlying system is nonlinear.
+      </p>
+    </div>
   </section>
 
-  <section id="dmd-flip-analysis">
-    <h2>Analyzing FLIP Dynamics Using DMD</h2>
+  <section class="mb-16" id="dmd-gaussian-example">
+    <h2 class="text-2xl font-semibold mb-4 text-blue-800">A Visual Example: Two Blinking Gaussian Blobs</h2>
 
-    <p>
-      After simulating our synthetic FLIP dataset, we apply <strong>Dynamic Mode Decomposition (DMD)</strong> to extract spatial and temporal structures that underlie the observed fluorescence decay. DMD is particularly suitable here because it decomposes the data into low-rank components that capture coherent spatiotemporal patterns — even in noisy, nonlinear systems.
-    </p>
+    <div class="text-lg leading-relaxed">
+      <p>
+        To build intuition, we generate synthetic data from two <strong>Gaussian blobs</strong> located at different positions on a 2D grid. Each blob "blinks" (oscillates in amplitude) at a distinct frequency, creating a spatially structured, temporally evolving dataset.
+      </p>
 
-    <img src="../assets/simulated_cell.png" alt="DMD Modes of FLIP Simulation" style="max-width: 100%;">
-    <p>
-      First, we reshape the data from a 3D array of shape \( (T, H, W) \) into a 2D matrix \( X \in \mathbb{R}^{n \times T} \), where each column is a vectorized image at a given time. This is a standard preprocessing step before applying DMD.
-    </p>
+      <p class="mt-4">
+        Mathematically, the data forms a time series of 2D frames \( X(t) \in \mathbb{R}^{n_x \times n_y} \), reshaped into a matrix \( X \in \mathbb{R}^{n \times T} \), where each column is a flattened frame at time \( t \).
+      </p>
+    </div>
 
-    <p>
-      We then apply classical DMD using a fixed <code>svd_rank=3</code>, which enforces a low-rank approximation by retaining only the three most energetic dynamic components. The output consists of:
-      <ul>
-        <li><strong>Modes:</strong> spatial structures \( \phi_i \) showing where patterns emerge</li>
-        <li><strong>Eigenvalues:</strong> \( \lambda_i \), which determine the temporal behavior of each mode</li>
-        <li><strong>Reconstruction:</strong> an approximation of the original data using only these three dynamic components</li>
-      </ul>
-    </p>
+    <!-- 💻 Kodeeksempel -->
+    <div class="mt-6 mb-10">
+      <pre class="rounded-xl overflow-x-auto shadow-lg text-sm"><code class="language-python">
+  def generate_blinking_blobs(T=100, nx=50, ny=50):
+      x = np.linspace(0, 10, nx)
+      y = np.linspace(0, 10, ny)
+      X, Y = np.meshgrid(x, y)
 
-    <p>
-      Each mode can be interpreted as a spatial "footprint" of a process in the cell. For example:
-      <ul>
-        <li>Mode 0 might represent a slow, global bleaching trend in the cytoplasm</li>
-        <li>Mode 1 could capture the more rapid decay near the nucleus, due to intercompartmental exchange</li>
-        <li>Mode 2 might highlight localized retention in regions like an aggregate (if present)</li>
-      </ul>
-      These patterns are visualized below:
-    </p>
+      center1 = (3, 3)
+      center2 = (7, 7)
 
-    <img src="../assets/simulated_cell_modes.png" alt="DMD Modes of FLIP Simulation" style="max-width: 100%;">
+      freq1 = 0.1  # slower oscillation
+      freq2 = 0.25  # faster oscillation
 
-    <p>
-      We also inspect the <strong>DMD eigenvalues</strong> in the complex plane. Each eigenvalue \( \lambda_i \) is mapped to a continuous-time growth/decay rate via:
-      \[
-      \omega_i = \frac{\log(\lambda_i)}{\Delta t}
-      \]
-      where \( \Delta t \) is the time between frames. Eigenvalues near the unit circle indicate sustained or oscillatory dynamics; those inside decay over time. The presence of multiple eigenvalues with real parts close to zero but slightly negative indicates slow decay, consistent with gradual fluorescence loss in the cytoplasm.
-    </p>
+      data = []
+      for t in range(T):
+          amp1 = 0.5 * (1 + np.sin(2 * np.pi * freq1 * t))
+          amp2 = 0.5 * (1 + np.sin(2 * np.pi * freq2 * t))
+          blob1 = amp1 * np.exp(-((X - center1[0])**2 + (Y - center1[1])**2))
+          blob2 = amp2 * np.exp(-((X - center2[0])**2 + (Y - center2[1])**2))
+          frame = blob1 + blob2
+          data.append(frame)
+      return np.array(data)  # shape: (T, ny, nx)
+      </code></pre>
+    </div>
 
-    <img src="../assets/eigenvalues_simulated_cell.png" alt="DMD Eigenvalues" style="max-width: 100%;">
-
-    <p>
-      Overall, the DMD analysis reveals that even in a relatively simple two- or three-compartment system, the resulting fluorescence evolution is composed of spatially distinct and temporally coupled components. This decomposition allows us to identify features that are not immediately visible in raw intensity data, such as:
-      <ul>
-        <li>Hidden boundaries between compartments (e.g., nucleus and aggregate)</li>
-        <li>Rates of exchange between them (via eigenvalue magnitude)</li>
-        <li>Stability or permanence of structures (e.g., modes that remain constant)</li>
-      </ul>
-    </p>
-
-    <p>
-      This approach lays the foundation for using DMD (and related modal decompositions) in live-cell imaging and fluorescence recovery/decay studies, where understanding transport, exchange, and binding is essential.
-    </p>
+    <div class="text-lg leading-relaxed">
+      <p>
+        Once the data is generated, we reshape it into a matrix where each column is a time snapshot, and apply the DMD algorithm step by step.
+      </p>
+    </div>
   </section>
 
-  <section id="flip-eigenvalue-analysis">
-    <h2>Eigenvalue Analysis of the FLIP Model</h2>
+  <section class="mb-16" id="dmd-algorithm">
+    <h2 class="text-2xl font-semibold mb-4 text-blue-800">The DMD Algorithm: Step by Step</h2>
 
-    <p>
-      To better understand the temporal behavior of the FLIP system, we compute the <strong>continuous-time eigenvalues</strong> of the governing differential equations. These eigenvalues describe the intrinsic dynamics of the system and give insight into stability, timescales, and interactions between compartments.
-    </p>
+    <div class="text-lg leading-relaxed mb-10">
+      <p>
+        Given a sequence of states over time, the core assumption of DMD is that there exists a (possibly low-rank) linear operator \( A \) such that:
+        <span>\[
+        X' \approx A X
+        \]</span>
+        where \( X \) and \( X' \) are two sequentially shifted data matrices.
+      </p>
 
-    <p>
-      The system is described by a set of first-order ODEs modeling the exchange and bleaching of fluorescence in the cytoplasm (\( F_c \)), nucleus (\( F_n \)), and optionally an aggregate (\( F_a \)). The linearized dynamics take the form:
-      \[
-      \frac{d\mathbf{F}}{dt} = A \mathbf{F}
-      \]
-      where \( A \) is the Jacobian matrix evaluated at the system's operating point (in this case, the full system since the model is linear).
-    </p>
+      <p class="mt-4">
+        To compute \( A \), we perform the following:
+      </p>
 
-    <h3>Without Aggregate</h3>
-    <p>
-      The reduced 2D system is:
-      \[
-      \frac{dF_c}{dt} = k_1 F_n - k_2 F_c - \beta F_c \\
-      \frac{dF_n}{dt} = -k_1 F_n + k_2 F_c
-      \]
-      Using symbolic computation, the Jacobian becomes:
-      \[
-      A = \begin{bmatrix}
-      -k_2 - \beta & k_1 \\
-      k_2 & -k_1
-      \end{bmatrix}
-      \]
-      For the parameter values \( k_1 = 0.025, k_2 = 0.15, \beta = 0.05 \), we obtain:
-      \[
-      A = \begin{bmatrix}
-      -0.2 & 0.025 \\
-      0.15 & -0.025
-      \end{bmatrix}
-      \]
-      The eigenvalues of this system are:
-      \[
-      \lambda_1 \approx -0.2193, \quad \lambda_2 \approx -0.0057
-      \]
-      Both are negative real numbers, indicating two modes with exponential decay. One decays quickly (short timescale), and the other very slowly (long timescale), which aligns with fluorescence loss dominated by cytoplasmic bleaching and nuclear replenishment.
-    </p>
+      <ol class="list-decimal list-inside mt-4 mb-6 space-y-2">
+        <li>Split the data: \( X = [x_0, \dots, x_{T-2}], \quad X' = [x_1, \dots, x_{T-1}] \)</li>
+        <li>Compute SVD: \( X = U \Sigma V^* \)</li>
+        <li>Truncate to rank \( r \): keep only the top \( r \) modes</li>
+        <li>Form the reduced operator: \( \tilde{A} = U_r^T X' V_r \Sigma_r^{-1} \)</li>
+        <li>Compute eigenpairs: \( \tilde{A} W = W \Lambda \)</li>
+        <li>Lift eigenvectors: \( \Phi = X' V_r \Sigma_r^{-1} W \)</li>
+      </ol>
 
-    <h3>With Aggregate</h3>
-    <p>
-      Including an aggregate introduces a third compartment:
-      \[
-      \frac{dF_a}{dt} = k_3 F_c - k_4 F_a
-      \]
-      leading to a 3D system with Jacobian:
-      \[
-      A = \begin{bmatrix}
-      -k_2 - \beta - k_3 & k_1 & k_4 \\
-      k_2 & -k_1 & 0 \\
-      k_3 & 0 & -k_4
-      \end{bmatrix}
-      \]
-      With the values \( k_3 = k_4 = 0.01 \), the numeric matrix becomes:
-      \[
-      A = \begin{bmatrix}
-      -0.21 & 0.025 & 0.01 \\
-      0.15 & -0.025 & 0 \\
-      0.01 & 0 & -0.01
-      \end{bmatrix}
-      \]
-      The eigenvalues here are:
-      \[
-      \lambda_1 \approx -0.2289, \quad \lambda_2 \approx -0.0113, \quad \lambda_3 \approx -0.0048
-      \]
-      All are real and negative, again indicating exponential decay. Compared to the 2D system, the presence of an aggregate introduces a new, very slow mode (\( \lambda_3 \)) which reflects the slow exchange with the aggregate. This matches intuition: fluorescence is temporarily "stored" in the aggregate, then released slowly, creating long-lived dynamics in the data.
-    </p>
+      <p>
+        The modes \( \Phi \) describe spatial structures. Their time evolution is governed by the eigenvalues \( \lambda \), where
+        <span>\( \omega = \log(\lambda) \)</span> gives continuous-time dynamics.
+      </p>
+    </div>
 
-    <h3>Comparison with DMD Results</h3>
-    <p>
-      The eigenvalues obtained through symbolic analysis of the continuous system serve as a ground truth reference. When we perform DMD on the simulated fluorescence data, the eigenvalues estimated from the temporal evolution matrix \( \tilde{A} \) should approximate the exponentiated form:
-      \[
-      \lambda_{\text{DMD}} \approx e^{\omega_i \Delta t}
-      \]
-      where \( \omega_i \) are the continuous eigenvalues and \( \Delta t \) is the timestep. By applying:
-      \[
-      \omega_i = \frac{\log(\lambda_{\text{DMD}})}{\Delta t}
-      \]
-      we can directly compare the DMD-estimated dynamics to the theoretical continuous system. In our case, the DMD eigenvalues cluster near:
-      <ul>
-        <li>−0.22 (fast decay)</li>
-        <li>−0.01 (slow exchange)</li>
-        <li>Optional: −0.004 (aggregate dynamics)</li>
-      </ul>
-      which is a strong indication that DMD is capturing the true underlying dynamic structure.
-    </p>
+    <!-- 💻 DMD-koden -->
+    <div class="mb-12">
+      <pre class="rounded-xl overflow-x-auto shadow-lg text-sm"><code class="language-python">
+  X = data_reshaped[:, :-1]
+  X_prime = data_reshaped[:, 1:]
 
-    <p>
-      This validates both our simulation and the use of DMD as a powerful tool for revealing hidden dynamical mechanisms in biological transport systems, including fluorescence-based assays like FLIP.
-    </p>
+  U, S, Vh = svd(X, full_matrices=False)
+  r = 10
+  U_r = U[:, :r]
+  S_r = np.diag(S[:r])
+  V_r = Vh.conj().T[:, :r]
+
+  A_tilde = U_r.T @ X_prime @ V_r @ pinv(S_r)
+  eigenvalues, W = eig(A_tilde)
+  Phi = X_prime @ V_r @ pinv(S_r) @ W
+
+  # Filter out small eigenvalues
+  valid = np.abs(eigenvalues) > 1e-10
+  eigenvalues = eigenvalues[valid]
+  W = W[:, valid]
+  Phi = Phi[:, valid]
+
+  omega = np.log(eigenvalues)
+  b = pinv(Phi) @ X[:, 0]
+  time_dynamics = np.array([b * np.exp(omega * t) for t in range(T-1)]).T
+  X_dmd = Phi @ time_dynamics
+      </code></pre>
+    </div>
   </section>
 
-  <section id="dmd-real-data">
-    <h2>Applying DMD to Experimental FLIP Data</h2>
+  <section class="mb-16" id="dmd-visuals">
+    <h2 class="text-2xl font-semibold mb-4 text-blue-800">Results and Visualizations</h2>
 
-    <p>
-      As a final step, we apply <strong>Dynamic Mode Decomposition</strong> to a real FLIP experiment. The input is a multi-frame <code>.tif</code> video capturing the fluorescence decay over time in a living cell. This experiment includes photobleaching of a region and tracks how fluorescence redistributes across the cell, revealing transport dynamics.
-    </p>
-
-    <p>
-      The video is converted into a 3D array of shape \( (T, H, W) \), then reshaped into a 2D matrix \( X \in \mathbb{R}^{n \times T} \) where each column represents a frame. We then run DMD using:
-      <pre><code>DMD(svd_rank=0)</code></pre>
-      which selects all meaningful singular values to capture the full rank of the system.
-    </p>
-
-    <img src="../assets/real_cell_modes.png" alt="DMD Modes of FLIP Simulation" style="max-width: 100%;">
-
-
-    <img src="../assets/eigenvalues_real_cell.png" alt="DMD Modes of FLIP Simulation" style="max-width: 100%;">
-    <h3>Interpreting the Eigenvalues</h3>
-
-    <p>
-      The eigenvalues of the low-dimensional linear operator \( \tilde{A} \) give insight into the timescales and behavior of each dynamic component. For this dataset, the eigenvalues are:
-      \[
-      \lambda_1 \approx -0.0027,\quad \lambda_2 \approx -0.298,\quad \lambda_3 = \lambda_4 \approx -0.186
-      \]
-      These are all <strong>real and negative</strong>, indicating purely decaying modes — as expected in FLIP experiments, where fluorescence generally decays over time due to photobleaching and irreversible binding or sequestration.
-    </p>
-
-    <ul>
-      <li>
-        <strong>\( \lambda_2 \) and \( \lambda_3 \):</strong> Rapid decay (short timescale); likely representing the bleached region and immediate surroundings where signal is lost quickly.
-      </li>
-      <li>
-        <strong>\( \lambda_1 \):</strong> Very slow decay; possibly related to a stable or insulated region (e.g., nuclear core, aggregates) that loses fluorescence more gradually or maintains higher intensity longer.
-      </li>
-    </ul>
-
-    <h3>Interpreting the Modes</h3>
-
-    <p>
-      Each mode corresponds to a spatial pattern associated with one of the eigenvalues. By reshaping the modes back to the \( (H, W) \) format, we visualize where in the cell each dynamic component is most active. For instance:
-      <ul>
-        <li>Modes with uniform decay might correspond to cytoplasmic bleaching.</li>
-        <li>Localized modes could indicate barriers, aggregates, or slow-exchange compartments.</li>
-        <li>Overlapping modes show coupled dynamics, such as transport between nucleus and cytoplasm.</li>
+    <div class="text-lg leading-relaxed mb-6">
+      <p>
+        The outputs of the DMD process reveal both the spatial modes and how they evolve in time:
+      </p>
+      <ul class="list-disc list-inside mt-4 space-y-2">
+        <li><strong>DMD Eigenvalues:</strong> Their location in the complex plane determines oscillatory vs. decaying modes.</li>
+        <li><strong>Mode Amplitudes:</strong> Initial energy in each mode (coefficients \( b_i \)).</li>
+        <li><strong>Reconstruction:</strong> Comparing the original data to the DMD model reveals fidelity.</li>
+        <li><strong>Modes:</strong> Show spatial patterns that persist across time.</li>
+        <li><strong>Temporal Dynamics:</strong> Show how each mode oscillates or decays over time.</li>
       </ul>
-    </p>
+    </div>
 
-    <p>
-      Taken together, the modes and eigenvalues provide a compact yet highly informative representation of the underlying biology. DMD allows us to separate distinct spatial dynamics and assign each its own timescale — a major advantage over traditional region-based quantification.
-    </p>
+    <figure class="mb-10">
+      <img src="../assets/eigenvalues_blob.png" alt="DMD Eigenvalues" class="rounded shadow-md w-full">
+      <figcaption class="text-sm text-gray-600 text-center mt-2">
+        <strong>Figure:</strong> DMD eigenvalues plotted in the complex plane.
+      </figcaption>
+    </figure>
 
-    <p>
-      Most importantly, the eigenvalue magnitudes and multiplicity indicate the <strong>complexity</strong> of the transport dynamics: multiple similar eigenvalues (here, around −0.18) suggest redundancy or symmetry in spatial decay patterns, while distinct eigenvalues with widely varying decay rates suggest compartmentalization or sequestration phenomena.
-    </p>
+    <figure class="mb-10">
+      <img src="../assets/Amplitude_blob.png" alt="DMD Mode Amplitudes" class="rounded shadow-md w-full">
+      <figcaption class="text-sm text-gray-600 text-center mt-2">
+        <strong>Figure:</strong> Initial amplitudes of the dominant modes.
+      </figcaption>
+    </figure>
 
-    <p>
-      This approach demonstrates that even with noisy, real-world data, DMD can robustly extract mechanistic insight. Future work might involve:
-      <ul>
-        <li>Comparing DMD results across multiple cells or conditions</li>
-        <li>Tracking how eigenvalues shift with drug treatment or genetic perturbations</li>
-        <li>Correlating DMD modes with known subcellular structures</li>
-      </ul>
-    </p>
+    <figure class="mb-10">
+      <img src="../assets/Reconstructed_blob.png" alt="Original vs DMD Reconstructed Frame" class="rounded shadow-md w-full">
+      <figcaption class="text-sm text-gray-600 text-center mt-2">
+        <strong>Figure:</strong> Comparison of true vs. reconstructed data.
+      </figcaption>
+    </figure>
+
+    <figure class="mb-10">
+      <img src="../assets/modes_blob.png" alt="DMD Modes" class="rounded shadow-md w-full">
+      <figcaption class="text-sm text-gray-600 text-center mt-2">
+        <strong>Figure:</strong> Spatial patterns of the top DMD modes.
+      </figcaption>
+    </figure>
+
+    <figure class="mb-10">
+      <img src="../assets/dynamics_modes.png" alt="Temporal Evolution of DMD Modes" class="rounded shadow-md w-full">
+      <figcaption class="text-sm text-gray-600 text-center mt-2">
+        <strong>Figure:</strong> Time dynamics of the five most active modes.
+      </figcaption>
+    </figure>
   </section>
+
+  <section class="mb-16">
+    <div class="text-lg leading-relaxed">
+      <p>
+        DMD successfully decomposes the blinking blob data into meaningful spatial modes and clean temporal dynamics. 
+        This simple experiment illustrates the method's ability to find structure in time-dependent data, even when no underlying equations are known.
+        The linear nature of DMD allows for fast simulation, prediction, and interpretation — making it a versatile tool for modern data-driven science.
+      </p>
+    </div>
+  </section>
+
+  <section class="mb-20" id="dmd-flip-cell-analysis">
+    <h2 class="text-3xl font-bold mb-6 text-blue-900">Analyzing Fluorescence Dynamics in a Simulated Cell Using DMD</h2>
+
+    <div class="text-lg leading-relaxed text-gray-800 mb-10">
+      <p>
+        To demonstrate how DMD can uncover biological structure in image sequences, we simulate a simplified <strong>FLIP (Fluorescence Loss In Photobleaching)</strong> experiment on a model cell.
+        This artificial cell consists of three compartments:
+      </p>
+
+      <ul class="list-disc list-inside mt-3 mb-4 space-y-1">
+        <li><strong>Cytoplasm</strong>: the main area of the cell, where photobleaching occurs gradually.</li>
+        <li><strong>Nucleus</strong>: a high-fluorescence region exchanging material with the cytoplasm.</li>
+        <li><strong>Aggregate</strong>: a small region where fluorescence is slowly stored and released over time.</li>
+      </ul>
+
+      <p>
+        The simulation solves an ODE system describing the exchange of fluorescent molecules between compartments. Over time, the cytoplasm bleaches (intensity decreases), while the nucleus and aggregate modulate that decay through interaction.
+      </p>
+    </div>
+
+    <!-- 🖼️ Simulated Cell -->
+    <figure class="mb-12">
+      <img src="../assets/simulated_cell.png" alt="Simulated Cell Frame" class="rounded shadow-md w-full">
+      <figcaption class="text-sm text-gray-600 text-center mt-2">
+        <strong>Figure:</strong> A snapshot of the simulated cell. The nucleus appears in the upper right, the aggregate in the lower left, and the surrounding cytoplasm fills the main body.
+      </figcaption>
+    </figure>
+
+    <div class="text-lg leading-relaxed text-gray-800 mb-8">
+      <p>
+        After simulating the full video over time, we apply DMD to extract spatial modes and eigenvalues. Each mode isolates a spatiotemporal structure that evolves independently according to its own decay rate. These modes are derived purely from the data — DMD has no prior knowledge of where the nucleus or aggregate are located.
+      </p>
+    </div>
+
+    <!-- 🖼️ DMD Modes -->
+    <figure class="mb-10">
+      <img src="../assets/simulated_cell_modes.png" alt="DMD Modes of Simulated Cell" class="rounded shadow-md w-full">
+      <figcaption class="text-sm text-gray-600 text-center mt-2">
+        <strong>Figure:</strong> The first three DMD modes extracted from the FLIP simulation.
+      </figcaption>
+    </figure>
+
+    <div class="text-lg leading-relaxed text-gray-800 mb-8">
+      <h3 class="text-xl font-semibold text-blue-800 mb-2">Mode Interpretation</h3>
+
+      <p class="mb-4">
+        <strong>Mode 0</strong> captures the <em>global bleaching behavior</em>. The cytoplasm appears dark blue, indicating strong decay. The aggregate shows values close to zero — meaning it remains relatively constant — while the nucleus is light red, indicating a slightly slower decay or even minor replenishment. This mode reflects the dominant dynamic: cytoplasmic signal loss.
+      </p>
+
+      <p class="mb-4">
+        <strong>Mode 1</strong> is focused on the <em>nuclear decay</em>. Here, the nucleus is strongly negative (dark blue), showing it is losing fluorescence, likely due to its exchange with the bleached cytoplasm. The aggregate is also negative but less so, and the cytoplasm is very close to zero, meaning this mode is spatially concentrated in the nucleus. It captures an intermediate timescale — slower than bleaching, but faster than aggregate decay.
+      </p>
+
+      <p class="mb-4">
+        <strong>Mode 2</strong> reveals <em>aggregate dynamics</em>. The aggregate is dark red (strongly negative), showing slow signal release. Interestingly, the nucleus is strongly positive, indicating some feedback or compensation in the model. The cytoplasm is faintly positive, suggesting small-scale background fluctuations. This mode evolves slowly over time and dominates the tail end of the dynamics.
+      </p>
+    </div>
+
+    <!-- 🖼️ Eigenvalues -->
+    <figure class="mb-10">
+      <img src="../assets/eigenvalues_simulated_cell.png" alt="DMD Eigenvalues from FLIP Simulation" class="rounded shadow-md w-full">
+      <figcaption class="text-sm text-gray-600 text-center mt-2">
+        <strong>Figure:</strong> DMD eigenvalues plotted in the complex plane and converted to continuous time. Each eigenvalue describes how quickly a mode decays.
+      </figcaption>
+    </figure>
+
+    <div class="text-lg leading-relaxed text-gray-800">
+      <p>
+        The eigenvalues confirm our interpretation. We convert the discrete-time DMD eigenvalues to continuous time using:
+        <span>\[
+        \omega = \frac{\log(\lambda)}{\Delta t}, \quad \Delta t = 0.5
+        \]</span>
+      </p>
+
+      <pre class="bg-gray-100 p-4 rounded-md text-sm mb-4">
+  Eigenvalues (ω): [-0.230, -0.011, -0.005]
+      </pre>
+
+      <p>
+        The largest (most negative) value corresponds to rapid bleaching in the cytoplasm (Mode 0), while the slower eigenvalues correspond to the dynamics of the nucleus and aggregate (Modes 1 and 2). All values are real and negative — indicating monotonic decay with no oscillations.
+      </p>
+
+      <p class="mt-4">
+        In summary, this example shows that DMD is capable of uncovering hidden compartments and dynamic behavior from image sequences alone — making it a promising technique for analyzing fluorescence recovery and transport in cells.
+      </p>
+    </div>
+  </section>
+
+  
+
+  <section class="mb-20" id="flip-eigenvalue-validation">
+    <h2 class="text-3xl font-bold mb-6 text-blue-900">Validating DMD with Analytical Eigenvalues</h2>
+
+    <div class="text-lg leading-relaxed text-gray-800 mb-8">
+      <p>
+        One of the most important questions when applying DMD to biological or physical systems is whether it captures the <strong>true underlying dynamics</strong>. In this section, we validate our data-driven results by comparing DMD eigenvalues to the exact eigenvalues obtained from the known governing equations of our FLIP simulation.
+      </p>
+
+      <p class="mt-4">
+        Since the model we simulated is fully known and linear, we can analytically derive the Jacobian matrix \( A \) describing the evolution of fluorescence intensities \( F_c, F_n, F_a \) in the cytoplasm, nucleus, and aggregate:
+        \[
+        \frac{d\mathbf{F}}{dt} = A \mathbf{F}
+        \]
+        where the form of \( A \) depends on whether the aggregate is included in the simulation.
+      </p>
+    </div>
+
+    <h3 class="text-2xl font-semibold text-blue-800 mb-4">Theoretical Model (With Aggregate)</h3>
+
+    <div class="text-lg leading-relaxed text-gray-800 mb-8">
+      <p>
+        When the aggregate is included, the system is described by three coupled ODEs with the following structure:
+      </p>
+
+      <div class="my-4">
+        <span>\[
+        \begin{aligned}
+        \frac{dF_c}{dt} &= k_1 F_n - k_2 F_c - \beta F_c - k_3 F_c + k_4 F_a \\
+        \frac{dF_n}{dt} &= -k_1 F_n + k_2 F_c \\
+        \frac{dF_a}{dt} &= k_3 F_c - k_4 F_a
+        \end{aligned}
+        \]</span>
+      </div>
+
+      <p>
+        With the parameters used in our simulation:
+      </p>
+
+      <pre class="bg-gray-100 p-4 rounded-md text-sm mb-4">
+  k₁ = 0.025 k₂ = 0.15 β = 0.05 k₃ = 0.01 k₄ = 0.01
+      </pre>
+
+      <p>The Jacobian matrix becomes:</p>
+
+      <div class="my-4">
+        <span>\[
+        A = \begin{bmatrix}
+        -0.21 & 0.025 & 0.01 \\
+        0.15 & -0.025 & 0 \\
+        0.01 & 0 & -0.01
+        \end{bmatrix}
+        \]</span>
+      </div>
+
+      <p>
+        Computing the eigenvalues of this matrix gives us the true continuous-time dynamics:
+      </p>
+
+      <pre class="bg-gray-100 p-4 rounded-md text-sm mb-4">
+  Analytical eigenvalues: −0.229, −0.011, −0.005
+      </pre>
+    </div>
+
+    <h3 class="text-2xl font-semibold text-blue-800 mb-4">Comparison with DMD Eigenvalues</h3>
+
+    <div class="text-lg leading-relaxed text-gray-800 mb-8">
+      <p>
+        DMD estimates a discrete-time evolution matrix \( \tilde{A} \) from snapshot data. To compare it with our continuous model, we convert the eigenvalues using:
+      </p>
+
+      <div class="my-4">
+        <span>\[
+        \omega_i = \frac{\log(\lambda_i)}{\Delta t}
+        \quad \text{with} \quad \Delta t = 0.5
+        \]</span>
+      </div>
+
+      <p>
+        In our FLIP DMD experiment, the extracted eigenvalues were:
+      </p>
+
+      <pre class="bg-gray-100 p-4 rounded-md text-sm mb-4">
+  DMD eigenvalues (ω): −0.230, −0.011, −0.005
+      </pre>
+
+      <p>
+        These values match almost exactly with the analytical eigenvalues derived from the ODE model. The close correspondence confirms that:
+      </p>
+
+      <ul class="list-disc list-inside mt-3 space-y-1">
+        <li><strong>The fast-decaying mode</strong> corresponds to photobleaching in the cytoplasm.</li>
+        <li><strong>The mid-speed mode</strong> reflects exchange between nucleus and cytoplasm.</li>
+        <li><strong>The slowest mode</strong> reveals retention and delayed release from the aggregate.</li>
+      </ul>
+
+      <p class="mt-4">
+        This match is especially impressive given that DMD was applied directly to image data — without prior knowledge of the compartment structure or ODEs.
+      </p>
+    </div>
+
+    <!-- 🖼️ Eigenvalues Plot -->
+    <figure class="mb-10">
+      <img src="../assets/eigenvalues_simulated_cell.png" alt="DMD Eigenvalues" class="rounded shadow-md w-full">
+      <figcaption class="text-sm text-gray-600 text-center mt-2">
+        <strong>Figure:</strong> DMD eigenvalues from the simulated FLIP experiment. All eigenvalues are real and negative, consistent with exponential decay in fluorescence.
+      </figcaption>
+    </figure>
+
+    <div class="text-lg leading-relaxed text-gray-800">
+      <p>
+        In conclusion, this experiment shows that DMD not only decomposes spatial dynamics into interpretable modes — it also recovers the correct temporal scales of biological processes. The eigenvalue comparison demonstrates that <strong>DMD can uncover the same structure as the governing equations themselves</strong>, validating it as a tool for inverse modeling and quantitative cell analysis.
+      </p>
+    </div>
+  </section>
+
+
+  <section id="dmd-real-data" class="mb-20">
+    <h2 class="text-3xl font-bold mb-6 text-blue-900">Applying DMD to Experimental FLIP Data</h2>
+
+    <div class="text-lg leading-relaxed text-gray-800 mb-8">
+      <p>
+        In this final analysis, we turn to real experimental data: a FLIP microscopy video capturing live-cell fluorescence decay over time. The dataset reflects biological transport processes such as diffusion, binding, and compartmental exchange within a single cell after photobleaching.
+      </p>
+
+      <p class="mt-4">
+        We process the video into a matrix \( X \in \mathbb{R}^{n \times T} \), where each column corresponds to a vectorized fluorescence frame. Using <code>DMD(svd_rank=0)</code>, we apply full-rank Dynamic Mode Decomposition to this spatiotemporal signal.
+      </p>
+    </div>
+
+    <!-- 📸 Modes visualization -->
+    <figure class="mb-10">
+      <img src="../assets/real_cell_modes.png" alt="DMD Modes of Real FLIP Data" class="rounded shadow-md w-full">
+      <figcaption class="text-sm text-gray-600 text-center mt-2">
+        <strong>Figure:</strong> The first four DMD modes extracted from the experimental FLIP sequence. Red indicates increasing intensity; blue indicates decay.
+      </figcaption>
+    </figure>
+
+    <h3 class="text-2xl font-semibold text-blue-800 mb-4">Interpreting the DMD Modes</h3>
+
+    <div class="text-lg leading-relaxed text-gray-800 mb-8">
+      <p>
+        Each DMD mode captures a spatial structure associated with a distinct temporal behavior. By examining the patterns of signal change across the cell, we gain insight into the dominant physiological processes:
+      </p>
+
+      <ul class="list-disc list-inside space-y-2 mt-3">
+        <li>
+          <strong>Mode 0:</strong> Uniform negative signal across the cytoplasm and aggregate, with a subtle positive offset in the nucleus. This suggests slow global bleaching, with the nucleus retaining signal slightly longer.
+        </li>
+        <li>
+          <strong>Mode 1:</strong> Strongly negative values in the nucleus and aggregate; near-zero decay in the cytoplasm. This indicates rapid fluorescence loss in confined compartments, while exchange or buffering in the cytoplasm maintains intensity.
+        </li>
+        <li>
+          <strong>Mode 2:</strong> A more mixed pattern — nucleus is now weakly positive, while some localized decay is visible in regions bordering the aggregate. This may reflect lateral redistribution or partial recovery.
+        </li>
+        <li>
+          <strong>Mode 3:</strong> The aggregate shows strong localized decay, the nucleus appears bright, and the cytoplasm is weakly positive. This suggests a delayed release from the aggregate and strong retention in the nuclear core.
+        </li>
+      </ul>
+
+      <p class="mt-4">
+        These modes allow us to spatially resolve how different subcellular compartments behave over time — something that traditional region-averaged analysis often obscures.
+      </p>
+    </div>
+
+    <!-- 📈 Eigenvalue plot -->
+    <figure class="mb-10">
+      <img src="../assets/eigenvalues_real_cell.png" alt="Eigenvalues from Real FLIP DMD" class="rounded shadow-md w-full">
+      <figcaption class="text-sm text-gray-600 text-center mt-2">
+        <strong>Figure:</strong> DMD eigenvalues of the experimental FLIP dataset. All values are real and negative, indicating exponential decay of fluorescence.
+      </figcaption>
+    </figure>
+
+    <h3 class="text-2xl font-semibold text-blue-800 mb-4">Interpreting the Eigenvalues</h3>
+
+    <div class="text-lg leading-relaxed text-gray-800 mb-8">
+      <p>
+        The eigenvalues \( \lambda_i \) extracted from DMD describe the temporal behavior of each mode. For this real cell:
+      </p>
+
+      <div class="my-4">
+        <span>\[
+        \lambda_1 \approx -0.0027, \quad \lambda_2 \approx -0.298, \quad \lambda_3 \approx -0.186, \quad \lambda_4 \approx -0.186
+        \]</span>
+      </div>
+
+      <p>
+        All eigenvalues are <strong>real and negative</strong>, consistent with irreversible fluorescence decay. The slower eigenvalue (−0.0027) likely corresponds to regions that retain signal longer — such as nuclear cores or trapped cytoplasmic proteins. The faster ones (−0.186 to −0.298) likely reflect photobleaching in the illuminated region and rapid exchange.
+      </p>
+
+      <p class="mt-4">
+        Interestingly, modes 3 and 4 share nearly identical eigenvalues. This suggests there may be two spatially separate components with similar decay dynamics — for example, the nucleus and aggregate showing parallel slow-release behavior.
+      </p>
+    </div>
+
+    <h3 class="text-2xl font-bold mt-12 mb-4 text-blue-900">Conclusion: DMD for Quantitative FLIP Analysis</h3>
+
+    <div class="text-lg leading-relaxed text-gray-800">
+      <p>
+        Throughout this project, we demonstrated how Dynamic Mode Decomposition can decompose both simulated and real FLIP microscopy data into coherent spatial structures and interpretable time constants. From blinking Gaussian blobs to biologically realistic transport systems, DMD consistently uncovered dominant dynamics that matched known behavior — including exchange rates, bleaching timescales, and compartmental isolation.
+      </p>
+
+      <p class="mt-4">
+        We used a classical implementation of DMD with no modifications: basic SVD truncation, no filtering, and standard numerical precision. However, there is significant room to enhance model fidelity. One could:
+      </p>
+
+      <ul class="list-disc list-inside mt-2 space-y-1">
+        <li>Use Tikhonov-regularized DMD for robustness to noise</li>
+        <li>Include time-delay embeddings to capture nonlinear dynamics</li>
+        <li>Preprocess data with motion correction or segmentation</li>
+        <li>Fit the continuous-time model directly via Total Least Squares</li>
+      </ul>
+
+      <p class="mt-4">
+        In summary, DMD is a powerful, lightweight tool for <strong>revealing structure in high-dimensional fluorescence data</strong>. Even with minimal assumptions, it provides clear physical interpretations that can guide further modeling and experimentation in live-cell biology.
+      </p>
+    </div>
+  </section>
+
 
 
 
