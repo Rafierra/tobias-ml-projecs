@@ -177,7 +177,7 @@
         </p>
     </div>
 
-    <!-- 📍 Hello World-eksamplet med Lorenz-systemet -->
+    <!-- Hello World-example with Lorenz system -->
     <section class="mb-16">
         <h3 class="text-xl font-semibold text-blue-700 mb-4">Hello World! — The Lorenz System</h3>
         
@@ -217,7 +217,7 @@
             </p>
         </div>
 
-        <!-- 🖼️ Lorenz Attractor -->
+        <!-- The Lorenz Attractor -->
         <figure class="mb-12">
             <img src="../assets/Lorenz_10000.png" alt="Lorenz attractor" class="rounded shadow w-full">
             <figcaption>
@@ -226,7 +226,7 @@
             </figcaption>
         </figure>
 
-        <!-- 💡 SINDy anvendt på Lorenz -->
+        <!-- SINDy applied to Lorenz -->
         <div class="text-lg leading-relaxed mb-8">
             <p>
             With this dataset in hand, we now apply SINDy to learn the underlying equations directly from the simulated data. 
@@ -234,7 +234,7 @@
             </p>
         </div>
 
-        <!-- 💻 PySINDy kode -->
+        <!-- PySINDy code -->
         <div class="mb-12">
             <pre class="rounded-xl overflow-x-auto shadow-lg text-sm"><code class="language-python">
         import pysindy as ps
@@ -245,7 +245,7 @@
             </code></pre>
         </div>
 
-        <!-- 📊 Resultat og sammenligning -->
+        <!-- Results and comparison -->
         <div class="text-lg leading-relaxed mb-8">
             <p>
             The learned equations are:
@@ -270,7 +270,7 @@
             </p>
         </div>
 
-        <!-- 🖼️ Sammenligning af modeller -->
+        <!-- Comparison of models -->
         <figure class="mb-12">
             <img src="../assets/Model_v_true_system.png" alt="SINDy vs True Lorenz System" class="rounded shadow w-full">
             <figcaption>
@@ -358,7 +358,7 @@
             </p>
         </div>
 
-        <!-- 💻 STLSQ Python -->
+        <!-- STLSQ algorithm -->
         <div class="mb-12">
             <pre class="rounded-xl overflow-x-auto shadow-lg text-sm"><code class="language-python">
         def STLSQ(Theta, dXdt, threshold=0.1, max_iter=10):
@@ -429,7 +429,7 @@
             </p>
         </div>
 
-        <!-- 🔹 SYSTEMER -->
+        <!-- The different systems -->
         <div class="mb-12">
             <h3 class="text-xl font-semibold text-blue-700 mb-4">The Four Chaotic Systems</h3>
 
@@ -506,7 +506,7 @@
             </div>
         </div>
 
-        <!-- 🖼️ Visualisation -->
+        <!-- Visualisation -->
         <figure class="mb-10">
             <img src="../assets/Four_attractors.png" alt="Phase portraits of all systems" class="rounded shadow-md w-full">
             <figcaption class="text-sm text-gray-600 text-center mt-2">
@@ -514,7 +514,7 @@
             </figcaption>
         </figure>
 
-        <!-- 📊 Resultater -->
+        <!-- Results -->
         <div class="mb-12">
             <h3 class="text-xl font-semibold text-blue-700 mb-4">Identification Results</h3>
             <p class="text-lg mb-4">
@@ -525,19 +525,19 @@
             </p>
 
             <pre class="bg-gray-50 p-4 rounded shadow-inner text-sm leading-relaxed font-mono mb-6">
-        🔹 RÖSSLER (λ₁ ≈ 0.07)
+         RÖSSLER (λ₁ ≈ 0.07)
         PolyLib:   ✅ @10k (1.52%), ✅ @5k (6.38%), ❌ ≤1k
         TrigLib:   ✅ @10k, ✅ @5k, ❌ ≤1k
 
-        🔹 THOMAS (λ₁ ≈ 0.16)
+         THOMAS (λ₁ ≈ 0.16)
         PolyLib:   ❌ all datapoints
         TrigLib:   ✅ @10k–500, ❌ ≤200
 
-        🔹 SHIMIZU–MORIOKA (λ₁ ≈ 0.10)
+         SHIMIZU–MORIOKA (λ₁ ≈ 0.10)
         PolyLib:   ✅ @10k–5k, ❌ ≤1k
         TrigLib:   ❌ all datapoints
 
-        🔹 CHEN (λ₁ ≈ 2.0)
+         CHEN (λ₁ ≈ 2.0)
         PolyLib:   ❌ all datapoints
         TrigLib:   ❌ all datapoints
             </pre>
@@ -579,7 +579,7 @@
             </p>
         </div>
 
-        <!-- 🖼️ Rössler Noise Figure -->
+        <!-- Rössler Noise Figure -->
         <figure class="mb-10">
             <img src="../assets/rosslernoise_1.png" alt="Rössler identification with 1% noise" class="rounded shadow-md w-full">
             <figcaption class="text-sm text-gray-600 text-center mt-2">
@@ -587,7 +587,7 @@
             </figcaption>
         </figure>
 
-        <!-- 🖼️ Shimizu Noise Figure -->
+        <!-- Shimizu Noise Figure -->
         <figure class="mb-10">
             <img src="../assets/shimizunoise_1.png" alt="Shimizu–Morioka identification with 1% noise" class="rounded shadow-md w-full">
             <figcaption class="text-sm text-gray-600 text-center mt-2">
@@ -595,7 +595,7 @@
             </figcaption>
         </figure>
 
-        <!-- 🔍 Resultatforklaring -->
+        <!-- Conclusion -->
         <div class="text-lg leading-relaxed">
             <p>
             Among all tested systems, <strong>only the Rössler and Shimizu–Morioka systems</strong> allowed correct structural recovery at 1% noise. This is consistent with their lower Lyapunov exponents and smoother attractors, which provide better tolerance to perturbations.
