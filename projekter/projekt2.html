@@ -315,15 +315,15 @@
       <h3 class="text-xl font-semibold text-blue-800 mb-2">Mode Interpretation</h3>
 
       <p class="mb-4">
-        <strong>Mode 0</strong> captures the <em>global bleaching behavior</em>. The cytoplasm appears dark blue, indicating strong decay. The aggregate shows values close to zero — meaning it remains relatively constant — while the nucleus is light red, indicating a slightly slower decay or even minor replenishment. This mode reflects the dominant dynamic: cytoplasmic signal loss.
+        <strong>Mode 0:</strong> captures the <em>global bleaching behavior</em>. The cytoplasm appears dark blue, indicating strong decay. The aggregate shows values close to zero — meaning it remains relatively constant — while the nucleus is light red, indicating a slightly slower decay or even minor replenishment. This mode reflects the dominant dynamic, and if you look further ahead this is just like we would expect with the linear system that it is based on. Cytoplasm is losing, aggregates stays the same and nucleus is gaining. 
       </p>
 
       <p class="mb-4">
-        <strong>Mode 1</strong> is focused on the <em>nuclear decay</em>. Here, the nucleus is strongly negative (dark blue), showing it is losing fluorescence, likely due to its exchange with the bleached cytoplasm. The aggregate is also negative but less so, and the cytoplasm is very close to zero, meaning this mode is spatially concentrated in the nucleus. It captures an intermediate timescale — slower than bleaching, but faster than aggregate decay.
+        <strong>Mode 1:</strong>Here we see that all three compartments are losing wight. This is a slower dynamic, and when mode 0, the most dominant mode, has been going then there are unequal weights in each of the compartments, so even though that the dynamics of the linear system tells that some compartments are gaining then at some time they have too much and are now losing. Here we can see that the nucleus are losing much and the aggregates as well. 
       </p>
 
       <p class="mb-4">
-        <strong>Mode 2</strong> reveals <em>aggregate dynamics</em>. The aggregate is dark red (strongly negative), showing slow signal release. Interestingly, the nucleus is strongly positive, indicating some feedback or compensation in the model. The cytoplasm is faintly positive, suggesting small-scale background fluctuations. This mode evolves slowly over time and dominates the tail end of the dynamics.
+        <strong>Mode 2:</strong> Here we see what happens at the latest times. The background indicates zero, thus we can see that the cytoplasm is gaining weight (It is slightly darker red than the background), and the nucleus is gaining weight the aggregat loses weight here. We also notice that each mode correspond to a different compartment losing weight. 
       </p>
     </div>
 
@@ -449,9 +449,9 @@
       </p>
 
       <ul class="list-disc list-inside mt-3 space-y-1">
-        <li><strong>The fast-decaying mode</strong> corresponds to photobleaching in the cytoplasm.</li>
-        <li><strong>The mid-speed mode</strong> reflects exchange between nucleus and cytoplasm.</li>
-        <li><strong>The slowest mode</strong> reveals retention and delayed release from the aggregate.</li>
+        <li><strong>The fast-decaying mode:</strong> corresponds to photobleaching in the cytoplasm.</li>
+        <li><strong>The mid-speed mode:</strong> reflects what happens after we change the weight a bit, and release of the nucleus.</li>
+        <li><strong>The slowest mode:</strong> reveals retention and release from the aggregate.</li>
       </ul>
 
       <p class="mt-4">
@@ -505,17 +505,15 @@
 
       <ul class="list-disc list-inside space-y-2 mt-3">
         <li>
-          <strong>Mode 0:</strong> Uniform negative signal across the cytoplasm and aggregate, with a subtle positive offset in the nucleus. This suggests slow global bleaching, with the nucleus retaining signal slightly longer.
+          <strong>Mode 0:</strong> The first mode is usually the background. This is the mode that does not change during images. As we can see it seem like we have three cells in this image, and the upper and the rightmost cell is the background. This makes sense since we did not bleach here. This also shows that there are not a “fast” connection between the cells, otherwise they would lose their mass when bleaching. 
         </li>
         <li>
-          <strong>Mode 1:</strong> Strongly negative values in the nucleus and aggregate; near-zero decay in the cytoplasm. This indicates rapid fluorescence loss in confined compartments, while exchange or buffering in the cytoplasm maintains intensity.
+          <strong>Mode 1:</strong>In the leftmost cell, we kind of see three compartments. A nucleus, that I would seperate in the upper and the lower part, and the cytoplasm around the nucleus. We see that the cytoplasm is gaining proteins very uniformly. Then we have the upper section of the nucleus, that gains a lot and more than the cytoplasm. We do not look at the other two cells. 
         </li>
         <li>
-          <strong>Mode 2:</strong> A more mixed pattern — nucleus is now weakly positive, while some localized decay is visible in regions bordering the aggregate. This may reflect lateral redistribution or partial recovery.
-        </li>
+          <strong>Mode 2:</strong> Mode 2 and 3 have the same eigenvalues they just differ in the complex number which are complex conjugate, this can happen using the DMD. Here we have that the lower section of the nucleus is losing quite a bit, and these modes show that while most of the cell is losing the main parts are the lower section and the upper section where the great gain of the protein does not lie.         </li>
         <li>
-          <strong>Mode 3:</strong> The aggregate shows strong localized decay, the nucleus appears bright, and the cytoplasm is weakly positive. This suggests a delayed release from the aggregate and strong retention in the nuclear core.
-        </li>
+          <strong>Mode 3:</strong> Shows the same as mode 2.        </li>
       </ul>
 
       <p class="mt-4">
@@ -545,12 +543,9 @@
       </div>
 
       <p>
-        All eigenvalues are <strong>real and negative</strong>, consistent with irreversible fluorescence decay. The slower eigenvalue (−0.0027) likely corresponds to regions that retain signal longer — such as nuclear cores or trapped cytoplasmic proteins. The faster ones (−0.186 to −0.298) likely reflect photobleaching in the illuminated region and rapid exchange.
+        All eigenvalues are <strong>real and negative</strong>, consistent with irreversible fluorescence decay. The slower eigenvalue (−0.0027) likely corresponds to mode 1 and the background, since there are not a low of change then we would expect the decay to go very slowly. The faster ones (−0.186 to −0.298) likely reflect photobleaching in the illuminated region and rapid exchange. These show mode 1, the fastest one, where some of the regions are gaining proteins, and then mode 2 and 3 for a slower pace that is losing in the entire cell. 
       </p>
 
-      <p class="mt-4">
-        Interestingly, modes 3 and 4 share nearly identical eigenvalues. This suggests there may be two spatially separate components with similar decay dynamics — for example, the nucleus and aggregate showing parallel slow-release behavior.
-      </p>
     </div>
 
     <h3 class="text-2xl font-bold mt-12 mb-4 text-blue-900">Conclusion: DMD for Quantitative FLIP Analysis</h3>
@@ -588,8 +583,8 @@
     <li>Schmid, P. J. (2010). <em>Dynamic mode decomposition of numerical and experimental data</em>. Journal of Fluid Mechanics, 656, 5–28.</li>
     <li>Kutz, J. N., et al. (2016). <em>Dynamic Mode Decomposition: Data-Driven Modeling of Complex Systems</em>. SIAM.</li>
     <li>Brunton, S. L., & Kutz, J. N. (2022). <em>Data-Driven Science & Engineering</em>. Cambridge University Press.</li>
-    <li><strong>pyDMD GitHub:</strong> <a href="https://github.com/mathLab/PyDMD">https://github.com/mathLab/PyDMD</a></li>
-    <li><strong>DMD in Cell Biology:</strong> Michalopoulou, A. et al. (2022). <em>DMD analysis of protein transport using FLIP microscopy</em>. Sensors 22(18), 4731.</li>
+    <li>pyDMD GitHub: <a href="https://github.com/mathLab/PyDMD">https://github.com/mathLab/PyDMD</a></li>
+    <li>DMD in Cell Biology: Michalopoulou, A. et al. (2022). <em>DMD analysis of protein transport using FLIP microscopy</em>. Sensors 22(18), 4731.</li>
   </ol>
 </main>
 
